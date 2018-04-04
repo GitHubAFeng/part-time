@@ -5,11 +5,11 @@ import 'wepy-async-function';
 
 export default class extends wepy.app {
   config = {
-    pages: ['pages/index',],
+    pages: ['pages/index','pages/joblist',],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#69c3aa',
-      navigationBarTitleText: '表情演员',
+      navigationBarTitleText: '兼职',
       navigationBarTextStyle: 'white'
     }
   };
