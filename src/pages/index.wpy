@@ -1,10 +1,19 @@
 <template>
   <view class="container">
-    <image class="corel" src="/style/corel.png" mode="aspectFill" style="width: 50px; height: 52px;"/>
+    <view class="cloud-box">
+      <image class="corel"  src="/style/corel.png" mode="aspectFill" />
+      <image class="cloud-6"  src="/style/cloud.png" mode="aspectFill" />
+      <view class="cloud-box2">
+        <image class="cloud-4"  src="/style/cloud.png" mode="aspectFill" />
+        <image class="cloud-5"  src="/style/cloud.png" mode="aspectFill" />
+      </view>
+
+    </view>
+    
     <view class="top-box">
-      <image class="logo" src="{{ user.avatar }}" />
+      <!-- <image class="logo" src="{{ user.avatar }}" />
       <text class="level">称号：{{ user.title }}</text>
-      <text class="record">最高记录: {{ user.record }}分</text>
+      <text class="record">最高记录: {{ user.record }}分</text> -->
     </view>
       <view class="content">
         <view class="hd" style="transform:rotateZ({{angle}}deg);">
@@ -36,7 +45,9 @@ export default class Index extends wepy.page {
     user: {
       title: '',
       record: 0
-    }
+    },
+    winWidth: 0,
+    // animationData1:{},
   };
 
   async onLoad(options) {
@@ -69,6 +80,8 @@ export default class Index extends wepy.page {
       url: `${BaseURL}/auth/user`,
       header: await this.$parent.authHeader()
     });
+
+    console.log('onLoad');
   }
 
   // 获取用户数据
@@ -88,10 +101,23 @@ export default class Index extends wepy.page {
 
   onShow() {
     this.getUserData();
+
+    //动画，但做循环不方便
+    // let animation = wx.createAnimation();
+    const { windowWidth } = wepy.getSystemInfoSync();
+    this.winWidth = windowWidth;
+    // this.animationData1 = animation.translate(windowWidth).step({
+    //   duration: 5000,
+    //     timingFunction: 'linear',
+    // })
+    // .export();
+
+    console.log('onShow');
   }
 
   onShareAppMessage(res) {
     return this.$parent.shareAppMessage();
+    console.log('onShareAppMessage');
   }
 
   onReady() {
@@ -106,6 +132,7 @@ export default class Index extends wepy.page {
         this.angle = angle;
       }
     });
+    console.log('onReady');
   }
 }
 </script>
@@ -292,22 +319,65 @@ export default class Index extends wepy.page {
   text-align: center;
 }
 
-.corel {
-  position: absolute;
-  margin: 0 auto;
-  margin-top: 10%;
-  animation: corel-amin 30s infinite;
+.cloud-box {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  .corel {
+    margin-top: 10%;
+    width: 100rpx;
+    height: 104rpx;
+    animation: corel-amin 10s linear infinite;
+  }
+
+  .cloud-6 {
+    width: 266rpx;
+    height: 144rpx;
+    margin-left: 60%;
+    animation: corel-amin 30s linear infinite;
+  }
+
+  .cloud-box2 {
+    .cloud-5 {
+      width: 212.8rpx;
+      height: 115.2rpx;
+      animation: corel-amin 40s linear infinite;
+    }
+    .cloud-4 {
+      width: 133rpx;
+      height: 72rpx;
+      animation: corel-amin 50s linear infinite;
+    }
+  }
 }
 
 @keyframes corel-amin {
-  from {
+  0% {
+    opacity: 0;
     transform: translate3d(0, 0, 0);
   }
-  to {
-    transform: translate3d(500px, 0, 0);
+
+  5% {
+    opacity: 0.5;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  95% {
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: translate3d(750rpx, 0, 0);
+    opacity: 0;
   }
 }
-
 
 .record {
   font-size: 14pt;
