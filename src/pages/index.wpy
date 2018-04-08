@@ -1,31 +1,30 @@
 <template>
   <view class="container">
     <view class="cloud-box">
-      <image class="corel"  src="/style/corel.png" mode="aspectFill" />
+      <image class="corel" src="/style/corel.png" mode="aspectFill" />
+      <image class="cloud-4"  src="/style/cloud.png" mode="aspectFill" />
+      <image class="cloud-5"  src="/style/cloud.png" mode="aspectFill" />
       <image class="cloud-6"  src="/style/cloud.png" mode="aspectFill" />
-      <view class="cloud-box2">
-        <image class="cloud-4"  src="/style/cloud.png" mode="aspectFill" />
-        <image class="cloud-5"  src="/style/cloud.png" mode="aspectFill" />
-      </view>
-
     </view>
     
     <view class="top-box">
-      <!-- <image class="logo" src="{{ user.avatar }}" />
-      <text class="level">称号：{{ user.title }}</text>
-      <text class="record">最高记录: {{ user.record }}分</text> -->
+      <image class="logo" src="{{ user.avatar }}" />
+      <text class="level">{{ user.nickname }}</text>
+      <!-- <text class="record">最高记录: {{ user.record }}分</text> -->
     </view>
-      <view class="content">
-        <view class="hd" style="transform:rotateZ({{angle}}deg);">
-          <image class="wave" src="/style/wave.png" mode="aspectFill" />
-          <image class="wave wave-bg" src="/style/wave.png" mode="aspectFill" />
-        </view>
-        <view class="bd">
-          <navigator url="/pages/joblist" class="btn" hover-class="btn-hover">寻找兼职</navigator>
-          <navigator url="/pages/circle" class="btn" hover-class="btn-hover">发布兼职</navigator>
-          <text class="tail">请认真查阅注意事项</text>
-        </view>
+
+    <view class="content">
+      <view class="hd" style="transform:rotateZ({{angle}}deg);">
+        <image class="wave" src="/style/wave.png" mode="aspectFill" />
+        <image class="wave wave-bg" src="/style/wave.png" mode="aspectFill" />
       </view>
+      <view class="bd">
+        <navigator url="/pages/joblist" class="btn" hover-class="btn-hover">寻找兼职</navigator>
+        <navigator url="/pages/circle" class="btn" hover-class="btn-hover">发布兼职</navigator>
+        <text class="tail">请认真查阅注意事项</text>
+      </view>
+    </view>
+    
   </view>
 </template>
 
@@ -46,8 +45,8 @@ export default class Index extends wepy.page {
       title: '',
       record: 0
     },
-    winWidth: 0,
-    // animationData1:{},
+    winWidth: 0
+    // animationData:{},
   };
 
   async onLoad(options) {
@@ -64,23 +63,24 @@ export default class Index extends wepy.page {
     this.user.nickname = nickname;
 
     // 更新用户资料
-    wepy.request({
-      data: {
-        city,
-        avatar,
-        gender,
-        // 邀请者
-        inviter:
-          (!options.scene ? 0 : Number(decodeURIComponent(options.scene))) ||
-          (!options.inviter ? 0 : Number(options.inviter)),
-        country,
-        nickname
-      },
-      method: 'POST',
-      url: `${BaseURL}/auth/user`,
-      header: await this.$parent.authHeader()
-    });
+    // wepy.request({
+    //   data: {
+    //     city,
+    //     avatar,
+    //     gender,
+    //     // 邀请者
+    //     inviter:
+    //       (!options.scene ? 0 : Number(decodeURIComponent(options.scene))) ||
+    //       (!options.inviter ? 0 : Number(options.inviter)),
+    //     country,
+    //     nickname
+    //   },
+    //   method: 'POST',
+    //   url: `${BaseURL}/auth/user`,
+    //   header: await this.$parent.authHeader()
+    // });
 
+    this.$apply();
     console.log('onLoad');
   }
 
@@ -100,15 +100,17 @@ export default class Index extends wepy.page {
   }
 
   onShow() {
-    this.getUserData();
+    // this.getUserData();
+
+    const { windowWidth } = wepy.getSystemInfoSync();
+    this.winWidth = windowWidth;
 
     //动画，但做循环不方便
     // let animation = wx.createAnimation();
-    const { windowWidth } = wepy.getSystemInfoSync();
-    this.winWidth = windowWidth;
-    // this.animationData1 = animation.translate(windowWidth).step({
+    // this.animationData = animation.translate(200).step({
     //   duration: 5000,
-    //     timingFunction: 'linear',
+    //   timingFunction: 'linear',
+    //   delay:2000
     // })
     // .export();
 
@@ -140,6 +142,16 @@ export default class Index extends wepy.page {
 <style lang="less">
 @import '../style/variables';
 
+@cloud-6-width: 266rpx * 0.3;
+@cloud-6-height: 144rpx * 0.3;
+@cloud-5-width: 212.8rpx * 0.3;
+@cloud-5-height: 115.2rpx * 0.3;
+@cloud-4-width: 212.133rpx * 0.3;
+@cloud-4-height: 72rpx * 0.3;
+@corel-width: 100rpx * 0.7;
+@corel-height: 104rpx * 0.7;
+
+
 .container {
   position: relative;
   flex: 1;
@@ -157,7 +169,7 @@ export default class Index extends wepy.page {
   flex: 1;
   display: flex;
   position: relative;
-  z-index: 10;
+  z-index: 3;
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
@@ -177,12 +189,16 @@ export default class Index extends wepy.page {
   animation: rise 3s cubic-bezier(0.19, 1, 0.22, 1) 0.25s forwards;
 }
 
+
 .top-box {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  // justify-content: center;
+  margin-top:-150rpx;
+  height:50rpx;
+
 }
 
 @keyframes rise {
@@ -204,7 +220,7 @@ export default class Index extends wepy.page {
     opacity: 0;
   }
   100% {
-    opacity: 0.95;
+    opacity: 1;
   }
 }
 
@@ -319,39 +335,52 @@ export default class Index extends wepy.page {
   text-align: center;
 }
 
+.record {
+  font-size: 14pt;
+  color: @white;
+}
+
 .cloud-box {
-  position: relative;
   display: flex;
   flex-direction: column;
+  margin-top: -50rpx;
+  height: 245rpx;
+
   .corel {
     margin-top: 10%;
-    width: 100rpx;
-    height: 104rpx;
-    animation: corel-amin 10s linear infinite;
+    margin-left: 60%;
+    width: @corel-width;
+    height: @corel-height;
+    justify-content: center;
+    animation: corel-amin 5s linear infinite;
+    // animation-name:corel-amin;
+    // animation-duration:0s;
+    // animation-timing-function:linear;
+    // animation-delay:10s;
+    // animation-iteration-count:infinite;
+    // animation-fill-mode:forwards;
+    // animation-direction:normal;
   }
 
   .cloud-6 {
-    width: 266rpx;
-    height: 144rpx;
+    width: @cloud-6-width;
+    height: @cloud-6-height;
     margin-left: 60%;
-    animation: corel-amin 30s linear infinite;
+    animation: cloud-amin 30s linear infinite;
   }
-
-  .cloud-box2 {
-    .cloud-5 {
-      width: 212.8rpx;
-      height: 115.2rpx;
-      animation: corel-amin 40s linear infinite;
-    }
-    .cloud-4 {
-      width: 133rpx;
-      height: 72rpx;
-      animation: corel-amin 50s linear infinite;
-    }
+  .cloud-5 {
+    width: @cloud-5-width;
+    height: @cloud-5-height;
+    animation: cloud-amin 40s linear infinite;
+  }
+  .cloud-4 {
+    width: @cloud-4-width;
+    height: @cloud-4-height;
+    animation: cloud-amin 50s linear infinite;
   }
 }
 
-@keyframes corel-amin {
+@keyframes cloud-amin {
   0% {
     opacity: 0;
     transform: translate3d(0, 0, 0);
@@ -379,9 +408,18 @@ export default class Index extends wepy.page {
   }
 }
 
-.record {
-  font-size: 14pt;
-  color: @white;
+@keyframes corel-amin {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, 30rpx, 0);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
 }
 </style>
 
