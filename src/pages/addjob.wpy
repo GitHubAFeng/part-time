@@ -1,0 +1,475 @@
+<template>
+  <view class="container">
+    <view class="user-box">
+      <image class="logo" src="{{ user.avatar }}"/>
+      <!-- <text class="level" wx:if="{{ ranking > 0 }}">排名: 第 {{ ranking }}</text> -->
+    </view>
+    <view class="content">
+      <view class="hd" style="transform:rotateZ({{angle}}deg);">
+        <image class="wave" src="/style/wave.png" mode="aspectFill" />
+        <image class="wave wave-bg" src="/style/wave.png" mode="aspectFill" />
+      </view>
+      <view class="bd">
+        <scroll-view class="scroller" scroll-y>
+          <view class="leaderboards">
+              <form @submit="confirm">
+                <view class="weui-cells-form">
+                    <!--联系人-->
+                    <view class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label iconfont">&#xe612; 联系人</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <input class="weui-input" name="name" placeholder="您的姓名" maxlength="5" value="{{address.name}}"/>
+                        </view>
+                    </view>
+                    <!--性别-->
+                    <view class="weui-cell weui-cells_after-title">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label iconfont">&#xe7f8; 称呼</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <view class="row">
+                            <radio-group class="radio-group row" @change="radio" id="sex">
+                                <label class="radio row">
+                                <radio value="1" checked="{{input.sex == 1}}"/>
+                                先生
+                                </label>
+                                <label class="radio ml20 row">
+                                <radio value="2" checked="{{input.sex == 2}}"/>
+                                女士
+                                </label>
+                            </radio-group>
+                            </view>
+                        </view>
+                    </view>
+                    <!--联系电话-->
+                    <view class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label iconfont">&#xe616; 联系电话</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <input class="weui-input" name="phone" placeholder="您的手机号码" type="number" maxlength="11" value="{{address.phone}}"/>
+                        </view>
+                    </view>
+
+                    <!--详细内容-->
+                    <view class="weui-cell weui-cells_after-title">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label iconfont">&#xe618; 详细内容</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <textarea class="weui-textarea" style="height: 3.3em" name="detail" placeholder="请输入内容…" value="{{address.detail}}" focus="{{focus}}"/>
+                            <view class="weui-textarea-counter">0/200</view>
+                        </view>
+                    </view>
+
+                <view class="weui-cell weui-cells_after-title">
+                    <view class="weui-cell__bd">
+                        <view class="weui-uploader">
+                            <view class="weui-uploader__hd">
+                                <view class="weui-uploader__title">图片上传</view>
+                                <view class="weui-uploader__info">{{files.length}}/2</view>
+                            </view>
+                            <view class="weui-uploader__bd">
+                                <view class="weui-uploader__files" id="uploaderFiles">
+                                    <block wx:for="{{files}}" wx:key="*this">
+                                        <view class="weui-uploader__file" @tap="previewImage" id="{{item}}">
+                                            <image class="weui-uploader__img" src="{{item}}" mode="aspectFill" />
+                                        </view>
+                                    </block>
+                                    <!-- <view class="weui-uploader__file">
+                                        <image class="weui-uploader__img" src="../images/pic_160.png" mode="aspectFill" />
+                                    </view>
+                                    <view class="weui-uploader__file">
+                                        <image class="weui-uploader__img" src="../images/pic_160.png" mode="aspectFill" />
+                                    </view>
+                                    <view class="weui-uploader__file">
+                                        <image class="weui-uploader__img" src="../images/pic_160.png" mode="aspectFill" />
+                                    </view> -->
+                                    <!-- <view class="weui-uploader__file weui-uploader__file_status">
+                                        <image class="weui-uploader__img" src="../images/pic_160.png" mode="aspectFill" />
+                                        <view class="weui-uploader__file-content">
+                                            <icon type="warn" size="23" color="#F43530"></icon>
+                                        </view>
+                                    </view>
+                                    <view class="weui-uploader__file weui-uploader__file_status">
+                                        <image class="weui-uploader__img" src="../images/pic_160.png" mode="aspectFill" />
+                                        <view class="weui-uploader__file-content">50%</view>
+                                    </view> -->
+                                </view>
+                                <view class="weui-uploader__input-box">
+                                    <view class="weui-uploader__input" @tap="chooseImageTap"></view>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+
+                    <checkbox-group @change="bindAgreeChange">
+                        <label class="weui-agree" for="weuiAgree">
+                            <view class="weui-agree__text">
+                                <checkbox class="weui-agree__checkbox" id="weuiAgree" value="agree" checked="{{isAgree}}" />
+                                <view class="weui-agree__checkbox-icon">
+                                    <icon class="weui-agree__checkbox-icon-check" type="success_no_circle" size="9" wx:if="{{isAgree}}"></icon>
+                                </view>
+                                阅读并同意<navigator url="" class="weui-agree__link">《相关条款》</navigator>
+                            </view>
+                        </label>
+                    </checkbox-group>
+
+                    <!--操作栏-->
+                    <view class="weui-btn-area">
+                        <button class="weui-btn" type="primary" style="background: #69c3aa;height: 85rpx;border-radius: 100rpx;" form-type="submit">发布</button>
+                    </view>
+
+                </view>
+              </form>
+          </view>
+         </scroll-view>
+        <text class="tail">请认真查阅注意事项</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import { BaseURL } from '../config';
+export default class AddJob extends wepy.page {
+  config = {
+    navigationBarTitleText: '兼职列表',
+    enablePullDownRefresh: false,
+    disableScroll: true,
+    navigationBarBackgroundColor: '#69c3aa'
+  };
+
+  data = {
+    leaderboards: [], // 好友排行榜
+    ranking: 0, // 当前用户排名
+    angle: 0,
+    user: {
+      title: '',
+      record: 0
+    },
+    isAgree: false,
+    files: []
+  };
+
+  methods = {
+    bindAgreeChange(e) {
+      this.isAgree = !!e.detail.value.length;
+    },
+    chooseImageTap() {
+      let _this = this;
+      wepy.showActionSheet({
+        itemList: ['从相册中选择', '拍照'],
+        itemColor: '#f7982a',
+        success: function(res) {
+          if (!res.cancel) {
+            if (res.tapIndex == 0) {
+              _this.chooseImage('album');
+            } else if (res.tapIndex == 1) {
+              _this.chooseImage('camera');
+            }
+          }
+        }
+      });
+    },
+    previewImage(e) {
+      wepy.previewImage({
+        current: e.currentTarget.id, // 当前显示图片的http链接
+        urls: this.data.files // 需要预览的图片http链接列表
+      });
+    }
+  };
+
+  async onLoad(options) {
+    this.getLeaderboards();
+    const { avatar } = await this.$parent.getUserInfo();
+    this.user.avatar = avatar;
+  }
+
+  async chooseImage(type) {
+    let res = await wepy.chooseImage({
+      sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+      // sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
+      sourceType: [type]
+    });
+    this.files = this.files.concat(res.tempFilePaths);
+    this.$apply();
+  }
+
+  //上传图片文件
+  async upload_file(url, filePath, name, formData) {
+    console.log('a=' + filePath);
+    let res = await wepy.uploadFile({
+      url: rootUrl + url,
+      filePath: filePath,
+      name: name,
+      header: {
+        'content-type': 'multipart/form-data'
+      }, // 设置请求的 header
+      formData: formData // HTTP 请求中其他额外的 form data
+    });
+    console.log('upload_file=' + res.statusCode);
+  }
+
+  // 获取用户数据
+  async getLeaderboards() {
+    wepy.request({
+      method: 'GET',
+      url: `${BaseURL}/auth/user/leaderboards`,
+      header: await this.$parent.authHeader(),
+      success: res => {
+        if (res.data.leaderboards) {
+          this.ranking = res.data.ranking;
+          this.leaderboards = res.data.leaderboards;
+          this.$apply();
+        }
+      }
+    });
+  }
+
+  onShareAppMessage(res) {
+    return this.$parent.shareAppMessage();
+  }
+
+  onReady() {
+    wepy.onAccelerometerChange(res => {
+      var angle = -(res.x * 30).toFixed(1);
+      if (angle > 14) {
+        angle = 14;
+      } else if (angle < -14) {
+        angle = -14;
+      }
+      if (this.angle !== angle) {
+        this.angle = angle;
+      }
+    });
+  }
+}
+</script>
+
+<style lang="less">
+@import '../style/variables';
+
+.container {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: @green;
+  align-items: stretch;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  justify-content: space-around;
+  box-sizing: border-box;
+}
+.content {
+  flex: 1;
+  display: flex;
+  position: relative;
+  z-index: 10;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    from(rgba(244, 244, 244, 0)),
+    color-stop(0.1, @white),
+    to(@white)
+  );
+  opacity: 0;
+  transform: translate3d(0, 100%, 0);
+  animation: rise 3s cubic-bezier(0.19, 1, 0.22, 1) 0.25s forwards;
+}
+
+.user-box {
+  position: absolute;
+  top: 3vh;
+  left: 3vh;
+  display: flex;
+}
+
+.logo {
+  z-index: 2;
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 160rpx;
+  opacity: 0.95;
+}
+
+.level {
+  color: @white;
+  padding-left: 20rpx;
+  line-height: 160rpx;
+  font-size: 16pt;
+  font-weight: bold;
+}
+
+@keyframes rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 450rpx, 0);
+  }
+}
+
+@keyframes show {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.95;
+  }
+}
+
+.hd {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1000rpx;
+  margin-left: -500rpx;
+  height: 200rpx;
+  transition: all 0.35s ease;
+}
+
+@keyframes sway {
+  0% {
+    transform: translate3d(0, 20rpx, 0) rotate(-15deg);
+  }
+  17% {
+    transform: translate3d(0, 0rpx, 0) rotate(25deg);
+  }
+  34% {
+    transform: translate3d(0, -20rpx, 0) rotate(-20deg);
+  }
+  50% {
+    transform: translate3d(0, -10rpx, 0) rotate(15deg);
+  }
+  67% {
+    transform: translate3d(0, 10rpx, 0) rotate(-25deg);
+  }
+  84% {
+    transform: translate3d(0, 15rpx, 0) rotate(15deg);
+  }
+  100% {
+    transform: translate3d(0, 20rpx, 0) rotate(-15deg);
+  }
+}
+.wave {
+  position: absolute;
+  z-index: 3;
+  right: 0;
+  bottom: 0;
+  opacity: 0.725;
+  height: 450rpx;
+  width: 2250rpx;
+  animation: wave 10s linear infinite;
+}
+.wave-bg {
+  z-index: 1;
+  animation: wave-bg 10.25s linear infinite;
+}
+@keyframes wave {
+  from {
+    transform: translate3d(125rpx, 0, 0);
+  }
+  to {
+    transform: translate3d(1125rpx, 0, 0);
+  }
+}
+@keyframes wave-bg {
+  from {
+    transform: translate3d(375rpx, 0, 0);
+  }
+  to {
+    transform: translate3d(1375rpx, 0, 0);
+  }
+}
+
+.bd {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: -150rpx;
+  align-items: stretch;
+  animation: bd-rise 2s cubic-bezier(0.23, 1, 0.32, 1) 0.75s forwards;
+  opacity: 0;
+}
+@keyframes bd-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 60rpx, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.tail {
+  width: 100%;
+  position: absolute;
+  top: 70vh;
+  display: flex;
+  justify-content: space-around;
+  font-size: 10pt;
+  color: #999;
+  text-align: center;
+}
+
+.record {
+  font-size: 14pt;
+  color: @white;
+}
+.scroller {
+  height: 70vh;
+}
+.leaderboards {
+  color: @green;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.friend-item {
+  display: flex;
+  padding: 20rpx 0;
+}
+.number {
+  font-size: 25pt;
+  line-height: 100rpx;
+  font-weight: bold;
+}
+.friend-avatar {
+  width: 100rpx;
+  margin-left: 10rpx;
+  height: 100rpx;
+  border-radius: 100rpx;
+  border: 1rpx solid @green;
+}
+
+.friend-item-right {
+  margin-left: 15rpx;
+  line-height: 50rpx;
+  display: flex;
+  flex-direction: column;
+  font-size: 15pt;
+}
+</style>
+

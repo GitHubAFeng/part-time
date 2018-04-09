@@ -2,9 +2,9 @@
   <view class="container">
     <view class="cloud-box">
       <image class="corel" src="/style/corel.png" mode="aspectFill" />
-      <image class="cloud-4"  src="/style/cloud.png" mode="aspectFill" />
-      <image class="cloud-5"  src="/style/cloud.png" mode="aspectFill" />
-      <image class="cloud-6"  src="/style/cloud.png" mode="aspectFill" />
+      <image class="cloud-4"  src="/style/image/cloud.png" mode="aspectFill" />
+      <image class="cloud-5"  src="/style/image/cloud.png" mode="aspectFill" />
+      <image class="cloud-6"  src="/style/image/cloud.png" mode="aspectFill" />
     </view>
     
     <view class="top-box">
@@ -15,12 +15,12 @@
 
     <view class="content">
       <view class="hd" style="transform:rotateZ({{angle}}deg);">
-        <image class="wave" src="/style/wave.png" mode="aspectFill" />
-        <image class="wave wave-bg" src="/style/wave.png" mode="aspectFill" />
+        <image class="wave" src="/style/image/wave.png" mode="aspectFill" />
+        <image class="wave wave-bg" src="/style/image/wave.png" mode="aspectFill" />
       </view>
       <view class="bd">
-        <navigator url="/pages/joblist" class="btn" hover-class="btn-hover">寻找兼职</navigator>
-        <navigator url="/pages/circle" class="btn" hover-class="btn-hover">发布兼职</navigator>
+        <navigator url="/pages/joblist" class="btn" hover-class="btn-hover">寻找</navigator>
+        <navigator url="/pages/addjob" class="btn" hover-class="btn-hover">发布</navigator>
         <text class="tail">请认真查阅注意事项</text>
       </view>
     </view>
