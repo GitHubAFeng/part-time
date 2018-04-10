@@ -1,7 +1,7 @@
 <script>
 import wepy from 'wepy';
 import { BaseURL } from './config';
-import 'wepy-async-function';
+import 'wepy-async-function'; //使用async/await
 
 export default class extends wepy.app {
   config = {
@@ -29,7 +29,9 @@ export default class extends wepy.app {
 
   constructor() {
     super();
+    //注册中间件
     this.use('requestfix');
+    this.use('promisify');
   }
 
   async onLaunch() {

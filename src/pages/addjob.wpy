@@ -20,7 +20,7 @@
                             <view class="weui-label iconfont">&#xe612; 联系人</view>
                         </view>
                         <view class="weui-cell__bd">
-                            <input class="weui-input" name="name" placeholder="您的姓名" maxlength="5" value="{{address.name}}"/>
+                            <input class="weui-input" name="name" placeholder="您的姓名" maxlength="5" value=""/>
                         </view>
                     </view>
                     <!--性别-->
@@ -30,13 +30,13 @@
                         </view>
                         <view class="weui-cell__bd">
                             <view class="row">
-                            <radio-group class="radio-group row" @change="radio" id="sex">
+                            <radio-group class="radio-group row" @change="radioChange" id="sex">
                                 <label class="radio row">
-                                <radio value="1" checked="{{input.sex == 1}}"/>
+                                <radio value="1" checked="{{sex == 1}}"/>
                                 先生
                                 </label>
                                 <label class="radio ml20 row">
-                                <radio value="2" checked="{{input.sex == 2}}"/>
+                                <radio value="2" checked="{{sex == 2}}"/>
                                 女士
                                 </label>
                             </radio-group>
@@ -49,9 +49,39 @@
                             <view class="weui-label iconfont">&#xe616; 联系电话</view>
                         </view>
                         <view class="weui-cell__bd">
-                            <input class="weui-input" name="phone" placeholder="您的手机号码" type="number" maxlength="11" value="{{address.phone}}"/>
+                            <input class="weui-input" name="phone" placeholder="您的手机号码" type="number" maxlength="11" value=""/>
                         </view>
                     </view>
+
+                    <view class="weui-cell weui-cell_input">
+                      <view class="weui-cell__hd">
+                        <view class="weui-label iconfont">&#xe68c; 开始时间</view>
+                      </view>
+                      <view class="weui-cell__bd weui-flex">
+                          <picker class="weui-flex__item" mode="date" value="{{date}}" start="2018-01-01" end="2020-01-01" @change="bindStartDateChange">
+                              <input class="weui-input" name="startdate" placeholder="请确定日期" type="text"  value="{{start.date}}" disabled/>
+                          </picker>
+                            <picker class="weui-flex__item" mode="time" value="{{time}}" start="00:00" end="23:59" @change="bindStartTimeChange">
+                              <input class="weui-input" name="starttime" placeholder="请确定时间" type="text"  value="{{start.time}}" disabled/>
+                          </picker>
+                        </view>
+                    </view>
+
+
+                    <view class="weui-cell weui-cell_input">
+                      <view class="weui-cell__hd">
+                        <view class="weui-label iconfont">&#xe68c; 结束时间</view>
+                      </view>
+                      <view class="weui-cell__bd weui-flex">
+                          <picker class="weui-flex__item" mode="date" value="{{date}}" start="2018-01-01" end="2020-01-01" @change="bindEndDateChange">
+                              <input class="weui-input " name="enddate" placeholder="请确定日期" type="text"  value="{{end.date}}" disabled/>
+                          </picker>
+                            <picker class="weui-flex__item" mode="time" value="{{time}}" start="00:00" end="23:59" @change="bindEndTimeChange">
+                              <input class="weui-input" name="endtime" placeholder="请确定时间" type="text"  value="{{end.time}}" disabled/>
+                          </picker>
+                        </view>
+                    </view>
+
 
                     <!--详细内容-->
                     <view class="weui-cell weui-cells_after-title">
@@ -59,52 +89,33 @@
                             <view class="weui-label iconfont">&#xe618; 详细内容</view>
                         </view>
                         <view class="weui-cell__bd">
-                            <textarea class="weui-textarea" style="height: 3.3em" name="detail" placeholder="请输入内容…" value="{{address.detail}}" focus="{{focus}}"/>
-                            <view class="weui-textarea-counter">0/200</view>
+                            <textarea class="weui-textarea" style="height: 3.3em" name="detail" placeholder="请输入内容…" value="" maxlength="300" bindinput="bindInputCount" />
+                            <view class="weui-textarea-counter">{{curLength}}/300</view>
                         </view>
                     </view>
 
-                <view class="weui-cell weui-cells_after-title">
-                    <view class="weui-cell__bd">
-                        <view class="weui-uploader">
-                            <view class="weui-uploader__hd">
-                                <view class="weui-uploader__title">图片上传</view>
-                                <view class="weui-uploader__info">{{files.length}}/2</view>
-                            </view>
-                            <view class="weui-uploader__bd">
-                                <view class="weui-uploader__files" id="uploaderFiles">
-                                    <block wx:for="{{files}}" wx:key="*this">
-                                        <view class="weui-uploader__file" @tap="previewImage" id="{{item}}">
-                                            <image class="weui-uploader__img" src="{{item}}" mode="aspectFill" />
-                                        </view>
-                                    </block>
-                                    <!-- <view class="weui-uploader__file">
-                                        <image class="weui-uploader__img" src="../images/pic_160.png" mode="aspectFill" />
-                                    </view>
-                                    <view class="weui-uploader__file">
-                                        <image class="weui-uploader__img" src="../images/pic_160.png" mode="aspectFill" />
-                                    </view>
-                                    <view class="weui-uploader__file">
-                                        <image class="weui-uploader__img" src="../images/pic_160.png" mode="aspectFill" />
-                                    </view> -->
-                                    <!-- <view class="weui-uploader__file weui-uploader__file_status">
-                                        <image class="weui-uploader__img" src="../images/pic_160.png" mode="aspectFill" />
-                                        <view class="weui-uploader__file-content">
-                                            <icon type="warn" size="23" color="#F43530"></icon>
-                                        </view>
-                                    </view>
-                                    <view class="weui-uploader__file weui-uploader__file_status">
-                                        <image class="weui-uploader__img" src="../images/pic_160.png" mode="aspectFill" />
-                                        <view class="weui-uploader__file-content">50%</view>
-                                    </view> -->
+                    <view class="weui-cell weui-cells_after-title">
+                        <view class="weui-cell__bd">
+                            <view class="weui-uploader">
+                                <view class="weui-uploader__hd">
+                                    <view class="weui-uploader__title">图片上传</view>
+                                    <view class="weui-uploader__info">{{files.length}}/2</view>
                                 </view>
-                                <view class="weui-uploader__input-box">
-                                    <view class="weui-uploader__input" @tap="chooseImageTap"></view>
+                                <view class="weui-uploader__bd">
+                                    <view class="weui-uploader__files" id="uploaderFiles">
+                                        <block wx:for="{{files}}" wx:key="*this">
+                                            <view class="weui-uploader__file" @tap="previewImage" id="{{item}}">
+                                                <image class="weui-uploader__img" src="{{item}}" mode="aspectFill" />
+                                            </view>
+                                        </block>
+                                    </view>
+                                    <view class="weui-uploader__input-box">
+                                        <view class="weui-uploader__input" @tap="chooseImageTap"></view>
+                                    </view>
                                 </view>
                             </view>
                         </view>
                     </view>
-                </view>
 
                     <checkbox-group @change="bindAgreeChange">
                         <label class="weui-agree" for="weuiAgree">
@@ -138,7 +149,7 @@ import wepy from 'wepy';
 import { BaseURL } from '../config';
 export default class AddJob extends wepy.page {
   config = {
-    navigationBarTitleText: '兼职列表',
+    navigationBarTitleText: '发布任务',
     enablePullDownRefresh: false,
     disableScroll: true,
     navigationBarBackgroundColor: '#69c3aa'
@@ -152,25 +163,61 @@ export default class AddJob extends wepy.page {
       title: '',
       record: 0
     },
+    start: { date: '', time: '' },
+    end: { date: '', time: '' },
+    sex: 1,
     isAgree: false,
-    files: []
+    files: [],
+    curLength:0,
   };
 
   methods = {
+    confirm(e) {
+      console.log('表单内容：', e.detail.value);
+    },
+    bindStartDateChange(e) {
+      this.start.date = e.detail.value;
+      console.log('this.start.date:', this.start.date);
+    },
+    bindStartTimeChange(e) {
+      this.start.time = e.detail.value;
+      console.log('this.start.time：', this.start.time);
+    },
+
+    bindEndDateChange(e) {
+      this.end.date = e.detail.value;
+      console.log('this.end.date', this.end.date);
+    },
+    bindEndTimeChange(e) {
+      this.end.time = e.detail.value;
+      console.log('this.end.time：', this.end.time);
+    },
+    radioChange(e) {
+      console.log('radio发生change事件，携带value值为：', e.detail.value);
+      this.sex = e.detail.value;
+      console.log('this.sex：', this.sex);
+    },
+    bindInputCount(e) {
+      console.log('bindInputCount：', e.detail.value);
+      this.curLength = e.detail.value.length;
+
+    },
     bindAgreeChange(e) {
       this.isAgree = !!e.detail.value.length;
     },
     chooseImageTap() {
-      let _this = this;
+      let _this = this; //20180410开发者工具更新最新版本后获取不到this
       wepy.showActionSheet({
         itemList: ['从相册中选择', '拍照'],
         itemColor: '#f7982a',
         success: function(res) {
           if (!res.cancel) {
             if (res.tapIndex == 0) {
+              console.log('chooseImage=album');
               _this.chooseImage('album');
             } else if (res.tapIndex == 1) {
               _this.chooseImage('camera');
+              console.log('chooseImage=camera');
             }
           }
         }
@@ -212,7 +259,7 @@ export default class AddJob extends wepy.page {
       }, // 设置请求的 header
       formData: formData // HTTP 请求中其他额外的 form data
     });
-    console.log('upload_file=' + res.statusCode);
+    // console.log('upload_file=' + res.statusCode);
   }
 
   // 获取用户数据
