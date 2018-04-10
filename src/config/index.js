@@ -1,2 +1,4 @@
-// 基础请求路由
-export const BaseURL = 'https://emotion.medivhzhan.me/api'
+
+
+export const BaseURL = 'http://127.0.0.1';
+

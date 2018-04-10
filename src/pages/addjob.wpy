@@ -146,7 +146,10 @@
 
 <script>
 import wepy from 'wepy';
-import { BaseURL } from '../config';
+import { BaseURL } from '../config/index';
+import TaskApi from '../api/task';
+import Tips from '../utils/Tips';
+
 export default class AddJob extends wepy.page {
   config = {
     navigationBarTitleText: '发布任务',
@@ -174,6 +177,9 @@ export default class AddJob extends wepy.page {
   methods = {
     confirm(e) {
       console.log('表单内容：', e.detail.value);
+      // Tips.loading();
+      const result = TaskApi.add(e.detail.value);
+      console.log('result：', result);
     },
     bindStartDateChange(e) {
       this.start.date = e.detail.value;
