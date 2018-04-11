@@ -149,6 +149,7 @@ import wepy from 'wepy';
 import { BaseURL } from '../config/index';
 import TaskApi from '../api/task';
 import Tips from '../utils/Tips';
+import checkInput from '../mixins/CheckInputMixin';
 
 export default class AddJob extends wepy.page {
   config = {
@@ -157,6 +158,8 @@ export default class AddJob extends wepy.page {
     disableScroll: true,
     navigationBarBackgroundColor: '#69c3aa'
   };
+
+  mixins = [checkInput];
 
   data = {
     leaderboards: [], // 好友排行榜
@@ -171,15 +174,64 @@ export default class AddJob extends wepy.page {
     sex: 1,
     isAgree: false,
     files: [],
-    curLength:0,
+    curLength: 0
   };
 
   methods = {
     confirm(e) {
       console.log('表单内容：', e.detail.value);
-      // Tips.loading();
-      const result = TaskApi.add(e.detail.value);
-      console.log('result：', result);
+      let _this = this;
+
+      const form_data = {
+        detail: e.detail.value.detail,
+        start: `${_this.start.date} ${_this.start.time}`,
+        end: `${_this.end.date} ${_this.end.time}`,
+        sex: _this.sex,
+        phone: e.detail.value.phone,
+        name: _this.trim(e.detail.value.name)
+      };
+
+      const rules = [
+        {
+          value: form_data.name,
+          method: 'required',
+          message: '请输入联系人'
+        },
+        {
+          value: form_data.phone,
+          method: 'required',
+          message: '请输入手机号码'
+        },
+        {
+          value: form_data.phone,
+          method: 'tel',
+          message: '手机号码不正确'
+        },
+        {
+          value: form_data.detail,
+          method: 'required',
+          message: '请输入详细内容'
+        }
+      ];
+
+      if (!_this.check(rules)) return false;
+
+      if (!_this.isAgree) {
+        Tips.alert('请同意相关条款！');
+        return false;
+      }
+
+      Tips.loading();
+      const result = TaskApi.add(form_data);
+      result.then(v => {
+        console.log(v);
+        if (v.code == 0) {
+          Tips.success('发布成功');
+          wepy.navigateBack();
+        } else {
+          Tips.error('发布失败，请稍后重试！');
+        }
+      });
     },
     bindStartDateChange(e) {
       this.start.date = e.detail.value;
@@ -204,9 +256,8 @@ export default class AddJob extends wepy.page {
       console.log('this.sex：', this.sex);
     },
     bindInputCount(e) {
-      console.log('bindInputCount：', e.detail.value);
+      // console.log('bindInputCount：', e.detail.value);
       this.curLength = e.detail.value.length;
-
     },
     bindAgreeChange(e) {
       this.isAgree = !!e.detail.value.length;

@@ -31,6 +31,8 @@
 <script>
 import wepy from 'wepy';
 import { BaseURL } from '../config';
+import userApi from '../api/user';
+
 export default class Index extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -79,6 +81,17 @@ export default class Index extends wepy.page {
     //   url: `${BaseURL}/auth/user`,
     //   header: await this.$parent.authHeader()
     // });
+
+    const data = {
+      city,
+      avatar,
+      gender,
+      country,
+      nickname,
+      openid:'oqjZc5UBrVpCA2ugUzVuHtpZ2v4g'
+    };
+
+    userApi.update(data);
 
     this.$apply();
     console.log('onLoad');
@@ -151,7 +164,6 @@ export default class Index extends wepy.page {
 @corel-width: 100rpx * 0.7;
 @corel-height: 104rpx * 0.7;
 
-
 .container {
   position: relative;
   flex: 1;
@@ -189,16 +201,14 @@ export default class Index extends wepy.page {
   animation: rise 3s cubic-bezier(0.19, 1, 0.22, 1) 0.25s forwards;
 }
 
-
 .top-box {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   // justify-content: center;
-  margin-top:-150rpx;
-  height:50rpx;
-
+  margin-top: -150rpx;
+  height: 50rpx;
 }
 
 @keyframes rise {
