@@ -226,8 +226,9 @@ export default class AddJob extends wepy.page {
       result.then(v => {
         console.log(v);
         if (v.code == 0) {
-          Tips.success('发布成功');
-          wepy.navigateBack();
+          Tips.success('发布成功').then(() => {
+            wepy.navigateBack();
+          });
         } else {
           Tips.error('发布失败，请稍后重试！');
         }
@@ -263,7 +264,7 @@ export default class AddJob extends wepy.page {
       this.isAgree = !!e.detail.value.length;
     },
     chooseImageTap() {
-      let _this = this; //20180410开发者工具更新最新版本后获取不到this
+      let _this = this; 
       wepy.showActionSheet({
         itemList: ['从相册中选择', '拍照'],
         itemColor: '#f7982a',
@@ -289,9 +290,10 @@ export default class AddJob extends wepy.page {
   };
 
   async onLoad(options) {
-    this.getLeaderboards();
+    // this.getLeaderboards();
     const { avatar } = await this.$parent.getUserInfo();
     this.user.avatar = avatar;
+    this.$apply();
   }
 
   async chooseImage(type) {

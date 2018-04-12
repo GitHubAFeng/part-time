@@ -16,6 +16,7 @@ export default class http {
     }
     console.info(`[http]request url=${url}`)
     const res = await wepy.request(param);
+
     if (this.isSuccess(res)) {
       return res.data;  //直接返回Promise对象
     } else {
@@ -28,6 +29,7 @@ export default class http {
    */
   static isSuccess(res) {
     const wxCode = res.statusCode;
+    
     // 微信请求错误
     if (wxCode !== 200) {
       return false;

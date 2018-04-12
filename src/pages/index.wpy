@@ -52,6 +52,7 @@ export default class Index extends wepy.page {
   };
 
   async onLoad(options) {
+    const _this = this;
     const {
       avatar,
       gender,
@@ -64,33 +65,18 @@ export default class Index extends wepy.page {
     this.user.gender = gender;
     this.user.nickname = nickname;
 
-    // 更新用户资料
-    // wepy.request({
-    //   data: {
-    //     city,
-    //     avatar,
-    //     gender,
-    //     // 邀请者
-    //     inviter:
-    //       (!options.scene ? 0 : Number(decodeURIComponent(options.scene))) ||
-    //       (!options.inviter ? 0 : Number(options.inviter)),
-    //     country,
-    //     nickname
-    //   },
-    //   method: 'POST',
-    //   url: `${BaseURL}/auth/user`,
-    //   header: await this.$parent.authHeader()
-    // });
-
     const data = {
       city,
       avatar,
       gender,
       country,
       nickname,
-      openid:'oqjZc5UBrVpCA2ugUzVuHtpZ2v4g'
+      openid: _this.$parent.globalData.token
     };
-
+    console.log(
+      '_this.$parent.globalData.token:',
+      _this.$parent.globalData.token
+    );
     userApi.update(data);
 
     this.$apply();
@@ -128,6 +114,7 @@ export default class Index extends wepy.page {
     // .export();
 
     console.log('onShow');
+    // console.log('onShow-token:',wepy.$instance.globalData.token);
   }
 
   onShareAppMessage(res) {

@@ -14,7 +14,7 @@ export default class Tips {
    * 弹出提示框
    */
 
-  static success(title, duration = 500) {
+  static success(title, duration = 2000) {
     wx.showToast({
       title: title,
       icon: 'success',
