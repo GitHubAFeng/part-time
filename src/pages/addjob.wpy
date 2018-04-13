@@ -89,7 +89,7 @@
                             <view class="weui-label iconfont">&#xe618; 详细内容</view>
                         </view>
                         <view class="weui-cell__bd">
-                            <textarea class="weui-textarea" style="height: 3.3em" name="detail" placeholder="请输入内容…" value="" maxlength="300" bindinput="bindInputCount" />
+                            <input class="weui-input" style="height: 3.3em" name="detail" placeholder="请输入内容…" value="" maxlength="300" bindinput="bindInputCount" />
                             <view class="weui-textarea-counter">{{curLength}}/300</view>
                         </view>
                     </view>
@@ -99,7 +99,7 @@
                             <view class="weui-uploader">
                                 <view class="weui-uploader__hd">
                                     <view class="weui-uploader__title">图片上传</view>
-                                    <view class="weui-uploader__info">{{files.length}}/2</view>
+                                    <view class="weui-uploader__info">{{files.length}}/3</view>
                                 </view>
                                 <view class="weui-uploader__bd">
                                     <view class="weui-uploader__files" id="uploaderFiles">
@@ -264,20 +264,29 @@ export default class AddJob extends wepy.page {
       this.isAgree = !!e.detail.value.length;
     },
     chooseImageTap() {
-      let _this = this; 
-      wepy.showActionSheet({
+      let _this = this;
+      console.log('chooseImageTap = 调用');
+      if (this.data.files.length >= 3) {
+        Tips.alert('只能上传3张图片');
+        return false;
+      }
+      let choose = wepy.showActionSheet({
         itemList: ['从相册中选择', '拍照'],
-        itemColor: '#f7982a',
-        success: function(res) {
-          if (!res.cancel) {
-            if (res.tapIndex == 0) {
-              console.log('chooseImage=album');
-              _this.chooseImage('album');
-            } else if (res.tapIndex == 1) {
-              _this.chooseImage('camera');
-              console.log('chooseImage=camera');
-            }
+        itemColor: '#f7982a'
+      });
+      choose.then(res => {
+        if (!res.cancel) {
+          if (res.tapIndex == 0) {
+            _this.chooseImage('album').then(v => {
+              console.log('chooseImage = album');
+            });
+          } else if (res.tapIndex == 1) {
+            _this.chooseImage('camera').then(v => {
+              console.log('chooseImage = camera');
+            });
           }
+        } else {
+          console.log('chooseImage = cancel:', res);
         }
       });
     },
@@ -291,7 +300,7 @@ export default class AddJob extends wepy.page {
 
   async onLoad(options) {
     // this.getLeaderboards();
-    const { avatar } = await this.$parent.getUserInfo();
+    const { avatar } = await this.$parent.globalData.user;
     this.user.avatar = avatar;
     this.$apply();
   }
@@ -302,23 +311,31 @@ export default class AddJob extends wepy.page {
       // sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
       sourceType: [type]
     });
+
+    this.upload_file(res.tempFilePaths[0]);
+
     this.files = this.files.concat(res.tempFilePaths);
     this.$apply();
   }
 
   //上传图片文件
-  async upload_file(url, filePath, name, formData) {
-    console.log('a=' + filePath);
+  async upload_file(filePath) {
     let res = await wepy.uploadFile({
-      url: rootUrl + url,
-      filePath: filePath,
-      name: name,
-      header: {
-        'content-type': 'multipart/form-data'
-      }, // 设置请求的 header
-      formData: formData // HTTP 请求中其他额外的 form data
+      name: 'image',
+      filePath,
+      url: `${BaseURL}/task/upload`
     });
-    // console.log('upload_file=' + res.statusCode);
+
+    console.log('upload_file  res= ', res);
+    if (res.statusCode == 200) {
+      console.log('upload_file  成功= ', res.data);
+    }
+
+    // res.then(v => {
+    //   console.log('upload_file  成功= ', v);
+    // }).catch((e)=>{
+    //   console.log('upload_file  失败= ', e);
+    // })
   }
 
   // 获取用户数据

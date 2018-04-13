@@ -33,21 +33,31 @@ export default class extends wepy.app {
     this.use('promisify'); //配合async/await语法
     this.use('requestfix'); //官方修复请求并发数量
 
+    //猜测在构造方法中因为this.globalData.token要异步获取所以有时拿不到值，要确保token有值时才调用请求
     this.intercept('request', {
       config(p) {
-        p.header = this.createAuthHeader();
+        p.header = {
+          Authorization: 'Bearer ' + this.globalData.token
+        };
+        return p;
+      }
+    });
+
+    this.intercept('uploadFile', {
+      config(p) {
+        p.header = {
+          Authorization: 'Bearer ' + this.globalData.token
+        };
         return p;
       }
     });
   }
 
   async onLaunch() {
-    console.log('onLaunch');
     wepy.showShareMenu();
 
-    if (!this.checkAuth() || !this.globalData.token) {
-      this.login();
-    }
+    // this.login();
+    console.log('onLaunch = APP启动完成');
   }
 
   // 检查 access_key 是否已经过期
@@ -61,11 +71,13 @@ export default class extends wepy.app {
         //重新登录
       }
     });
-    console.log('checkAuth');
+    console.log('checkAuth = 微信Session有效期验证完成');
   }
 
   // 登录
   async login() {
+    if (this.checkAuth() && this.globalData.token) return null;
+
     const { code } = await wepy.login();
     const param = {
       url: `${BaseURL}/user/token`,
@@ -75,23 +87,27 @@ export default class extends wepy.app {
 
     const res = await wepy.request(param);
     this.globalData.token = res.data.data;
-    console.log('this.globalData.token:', this.globalData.token);
-    console.log('login');
+
+    console.log('login = 微信用户登录完成');
+
+    return await this.getUserInfo();
   }
 
-  //构造权限头部，中间件
-  createAuthHeader() {
-    // const loginCode = wepy.$instance.globalData.token;
-    const loginCode = this.globalData.token;
-    // console.log('loginCode:', loginCode);
-
-    const header = {};
-    if (loginCode) {
-      header['Authorization'] = `Bearer ${loginCode}`;
-    }
-    return header;
-  }
-
+  //构造权限头部，中间件，轮询token值
+  // async authHeader() {
+  //   let header = {};
+  //   if (!this.globalData.token) {
+  //     const timer = setInterval(() => {
+  //       if (this.globalData.token) {
+  //         header = { Authorization: `Bearer ${this.globalData.token}` };
+  //         clearInterval(timer);
+  //       }
+  //     }, 50);
+  //   } else {
+  //     header = { Authorization: `Bearer ${this.globalData.token}` };
+  //   }
+  //   return header;
+  // }
 
   //获取微信用户信息
   async getUserInfo() {
@@ -106,26 +122,42 @@ export default class extends wepy.app {
     this.globalData.user.country = country;
     this.globalData.user.avatar = avatarUrl;
     this.globalData.user.nickname = nickName;
-    // console.log('getUserInfo', rawUser.encryptedData);
 
     // 没什么用，解密出来的信息和userInfo的内容一样，我擦
     // const wxUser = await this.decodeUserInfo(rawUser);
-    // console.log('decodeUserInfo', wxUser);
 
+    //更新服务端用户信息
+    const data = {
+      city,
+      avatar: avatarUrl,
+      gender,
+      country,
+      nickname: nickName,
+      openid: this.globalData.token
+    };
+    const update_param = {
+      url: `${BaseURL}/user/update`,
+      method: 'POST',
+      data: data,
+      header: { Authorization: 'Bearer ' + this.globalData.token }
+    };
+
+    const res = await wepy.request(update_param);
+    console.log('getUserInfo = 微信用户信息更新完成');
     return this.globalData.user;
   }
 
   //服务端解密用户信息
   async decodeUserInfo(rawUser) {
     const param = {
-      data: { iv: rawUser.iv, encryptedData: rawUser.encryptedData},
+      data: { iv: rawUser.iv, encryptedData: rawUser.encryptedData },
       method: 'GET',
-      url:`${BaseURL}/user/decode_userinfo`
+      url: `${BaseURL}/user/decode_userinfo`,
+      header: { Authorization: 'Bearer ' + this.globalData.token }
     };
     const res = await wepy.request(param);
     return res.data.data;
   }
-
 
   // 全局分享设置
   // imageUrl 分享图片路径
@@ -151,38 +183,37 @@ export default class extends wepy.app {
 @import './style/iconfont';
 
 page {
-    font-family: -apple-system-font, Helvetica Neue, Helvetica, sans-serif;
-    font-size: 10pt;
-    line-height: 150%;
-    min-height: 100%;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-  }
-  
-  .btn {
-    font-size: 13pt;
-    line-height: 85rpx;
-    height: 85rpx;
-    background: @green;
-    color: @white;
-    text-align: center;
-    border-radius: 100rpx;
-    margin: 40rpx;
-  }
-  
-  .btn-hover {
-    opacity: 0.8;
-  }
+  font-family: -apple-system-font, Helvetica Neue, Helvetica, sans-serif;
+  font-size: 10pt;
+  line-height: 150%;
+  min-height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
 
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.btn {
+  font-size: 13pt;
+  line-height: 85rpx;
+  height: 85rpx;
+  background: @green;
+  color: @white;
+  text-align: center;
+  border-radius: 100rpx;
+  margin: 40rpx;
+}
+
+.btn-hover {
+  opacity: 0.8;
+}
 </style>

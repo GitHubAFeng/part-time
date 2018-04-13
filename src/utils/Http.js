@@ -2,18 +2,23 @@ import wepy from 'wepy';
 
 // HTTP工具类
 export default class http {
-  static async request(method, url, data, loading = true) {
-
-    //默认为header: { 'content-type': 'application/json' }
-    const param = {
+  static async request(method, url, data, auth = true, loading = true) {
+    let param = {
       url: url,
       method: method,
       data: data,
     };
 
-    if (loading) {
-      // Tips.loading();
-    }
+    // if (auth) {
+    //   param.header = {
+    //     'Authorization': 'Bearer ' + wepy.$instance.globalData.token
+    //   }
+    //   console.log('[http]request token=', wepy.$instance.globalData.token);
+
+    // }
+    // if (loading) {
+    // Tips.loading();
+    // }
     console.info(`[http]request url=${url}`)
     const res = await wepy.request(param);
 
@@ -29,7 +34,7 @@ export default class http {
    */
   static isSuccess(res) {
     const wxCode = res.statusCode;
-    
+
     // 微信请求错误
     if (wxCode !== 200) {
       return false;

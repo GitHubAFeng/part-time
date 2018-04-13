@@ -1,10 +1,10 @@
 <template>
   <view class="container">
     <view class="cloud-box">
-      <image class="corel" src="/style/corel.png" mode="aspectFill" />
-      <image class="cloud-4"  src="/style/image/cloud.png" mode="aspectFill" />
-      <image class="cloud-5"  src="/style/image/cloud.png" mode="aspectFill" />
-      <image class="cloud-6"  src="/style/image/cloud.png" mode="aspectFill" />
+      <image class="corel" src="/style/corel.png" />
+      <image class="cloud-4"  src="/style/image/cloud.png" />
+      <image class="cloud-5"  src="/style/image/cloud.png" />
+      <image class="cloud-6"  src="/style/image/cloud.png" />
     </view>
     
     <view class="top-box">
@@ -53,54 +53,25 @@ export default class Index extends wepy.page {
 
   async onLoad(options) {
     const _this = this;
+
+    // 获取服务端用户数据
     const {
       avatar,
       gender,
       nickname,
       city,
       country
-    } = await this.$parent.getUserInfo();
+    } = await this.$parent.login();
 
     this.user.avatar = avatar;
     this.user.gender = gender;
     this.user.nickname = nickname;
-
-    const data = {
-      city,
-      avatar,
-      gender,
-      country,
-      nickname,
-      openid: _this.$parent.globalData.token
-    };
-    console.log(
-      '_this.$parent.globalData.token:',
-      _this.$parent.globalData.token
-    );
-    userApi.update(data);
-
     this.$apply();
-    console.log('onLoad');
-  }
 
-  // 获取用户数据
-  async getUserData() {
-    wepy.request({
-      method: 'GET',
-      url: `${BaseURL}/auth/user`,
-      header: await this.$parent.authHeader(),
-      success: res => {
-        this.user.title = res.data.title;
-        this.user.record = res.data.record;
-        this.$parent.globalData.user.id = res.data.id;
-        this.$apply();
-      }
-    });
+    console.log('onLoad = index首页');
   }
 
   onShow() {
-    // this.getUserData();
-
     const { windowWidth } = wepy.getSystemInfoSync();
     this.winWidth = windowWidth;
 
@@ -113,13 +84,13 @@ export default class Index extends wepy.page {
     // })
     // .export();
 
-    console.log('onShow');
+    console.log('onShow = index首页');
     // console.log('onShow-token:',wepy.$instance.globalData.token);
   }
 
   onShareAppMessage(res) {
     return this.$parent.shareAppMessage();
-    console.log('onShareAppMessage');
+    console.log('onShareAppMessage = index首页');
   }
 
   onReady() {
@@ -134,7 +105,7 @@ export default class Index extends wepy.page {
         this.angle = angle;
       }
     });
-    console.log('onReady');
+    console.log('onReady = index首页');
   }
 }
 </script>
@@ -148,8 +119,8 @@ export default class Index extends wepy.page {
 @cloud-5-height: 115.2rpx * 0.3;
 @cloud-4-width: 212.133rpx * 0.3;
 @cloud-4-height: 72rpx * 0.3;
-@corel-width: 100rpx * 0.7;
-@corel-height: 104rpx * 0.7;
+@corel-width: 100rpx * 1;
+@corel-height: 104rpx * 1;
 
 .container {
   position: relative;

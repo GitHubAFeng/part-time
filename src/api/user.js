@@ -25,12 +25,9 @@ export default class user extends base {
     /**
      * 获取
      */
-    static info(id) {
-        const url = `${this.baseUrl}/task/get/${id}`;
-        return this.get(url, id).then(data => {
-            data.location = data.fullAddress.replace(data.detail, '');
-            return data;
-        });
+    static info(data = {}) {
+        const url = `${this.baseUrl}/user/get`;
+        return this.get(url, data);
     }
 
 

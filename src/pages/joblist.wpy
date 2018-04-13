@@ -53,8 +53,8 @@ export default class JobList extends wepy.page {
   };
 
   async onLoad(options) {
-    this.getLeaderboards();
-    const { avatar } = await this.$parent.getUserInfo();
+    // this.getLeaderboards();
+    const { avatar } = await this.$parent.globalData.user;
     this.user.avatar = avatar;
   }
 
