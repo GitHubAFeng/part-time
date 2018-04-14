@@ -12,16 +12,7 @@
       <view class="bd">
         <scroll-view class="scroller" scroll-y>
           <view class="leaderboards">
-            <repeat for="{{ leaderboards }}" key="index" index="index" item="friend">
-              <view class="friend-item">
-                <text class="number">{{ index + 1 }}. </text>
-                <image class="friend-avatar" src="{{ friend.avatar }}"/>
-                <view class="friend-item-right">
-                <text class="friend-nickname">{{ friend.nickname }}</text>
-                <text class="friend-title">{{ friend.title }} - {{ friend.record }}</text>
-                </view>
-              </view>
-            </repeat>
+            <taskListCom :list.sync="tasklist"></taskListCom>
           </view>
          </scroll-view>
         <text class="tail">请认真查阅注意事项</text>
@@ -31,9 +22,12 @@
 </template>
 
 <script>
-
 import wepy from 'wepy';
 import { BaseURL } from '../config';
+import TaskApi from '../api/task';
+import Tips from '../utils/Tips';
+import taskListCom from '../components/taskList';
+
 export default class JobList extends wepy.page {
   config = {
     navigationBarTitleText: '兼职列表',
@@ -43,8 +37,8 @@ export default class JobList extends wepy.page {
   };
 
   data = {
-    leaderboards: [], // 好友排行榜
-    ranking: 0, // 当前用户排名
+    tasklist: [],
+    ranking: 0,
     angle: 0,
     user: {
       title: '',
@@ -52,25 +46,20 @@ export default class JobList extends wepy.page {
     }
   };
 
+  components = {
+    taskListCom
+  };
+
   async onLoad(options) {
-    // this.getLeaderboards();
+    let that = this;
     const { avatar } = await this.$parent.globalData.user;
     this.user.avatar = avatar;
-  }
 
-  // 获取用户数据
-  async getLeaderboards() {
-    wepy.request({
-      method: 'GET',
-      url: `${BaseURL}/auth/user/leaderboards`,
-      header: await this.$parent.authHeader(),
-      success: res => {
-        if (res.data.leaderboards) {
-          this.ranking = res.data.ranking;
-          this.leaderboards = res.data.leaderboards;
-          this.$apply();
-        }
-      }
+    const result = TaskApi.infoList();
+    result.then(v => {
+      that.tasklist = v.data;
+      console.log('this.data.tasklist  = ', that.tasklist);
+      that.$apply();
     });
   }
 
@@ -282,14 +271,14 @@ export default class JobList extends wepy.page {
 .scroller {
   height: 70vh;
 }
-.leaderboards {
-  color: @green;
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
+// .leaderboards {
+//   color: @green;
+//   display: flex;
+//   width: 100%;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+// }
 .friend-item {
   display: flex;
   padding: 20rpx 0;

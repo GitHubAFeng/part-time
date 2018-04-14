@@ -82,6 +82,14 @@
                         </view>
                     </view>
 
+                    <view class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label iconfont">&#xe612; 标题</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <input class="weui-input" name="title" placeholder="请填写任务标题" maxlength="20" value=""/>
+                        </view>
+                    </view>
 
                     <!--详细内容-->
                     <view class="weui-cell weui-cells_after-title">
@@ -174,7 +182,7 @@ export default class AddJob extends wepy.page {
     sex: 1,
     isAgree: false,
     files: [],
-    file_urls:[],
+    file_urls: [],
     curLength: 0
   };
 
@@ -189,7 +197,9 @@ export default class AddJob extends wepy.page {
         end: `${_this.end.date} ${_this.end.time}`,
         sex: _this.sex,
         phone: e.detail.value.phone,
-        name: _this.trim(e.detail.value.name)
+        name: _this.trim(e.detail.value.name),
+        user_avatar: _this.user.avatar,
+        title: e.detail.value.title
       };
 
       const rules = [
@@ -212,10 +222,15 @@ export default class AddJob extends wepy.page {
           value: form_data.detail,
           method: 'required',
           message: '请输入详细内容'
+        },
+        {
+          value: form_data.title,
+          method: 'required',
+          message: '请输入任务标题'
         }
       ];
 
-      // if (!_this.check(rules)) return false;
+      if (!_this.check(rules)) return false;
 
       if (!_this.isAgree) {
         Tips.alert('请同意相关条款！');
@@ -224,8 +239,7 @@ export default class AddJob extends wepy.page {
 
       Tips.loading();
 
-      // console.log('file_urls = ', this.data.file_urls);
-      form_data.images = JSON.stringify(this.data.file_urls);
+      form_data.images = JSON.stringify(_this.file_urls);
 
       const result = TaskApi.add(form_data);
       result.then(v => {
@@ -271,7 +285,7 @@ export default class AddJob extends wepy.page {
     chooseImageTap() {
       let _this = this;
       console.log('chooseImageTap = 调用');
-      if (this.data.files.length >= 3) {
+      if (_this.files.length >= 3) {
         Tips.alert('只能上传3张图片');
         return false;
       }
@@ -296,15 +310,15 @@ export default class AddJob extends wepy.page {
       });
     },
     previewImage(e) {
+      let that = this;
       wepy.previewImage({
         current: e.currentTarget.id, // 当前显示图片的http链接
-        urls: this.data.files // 需要预览的图片http链接列表
+        urls: that.files // 需要预览的图片http链接列表
       });
     }
   };
 
   async onLoad(options) {
-    // this.getLeaderboards();
     const { avatar } = await this.$parent.globalData.user;
     this.user.avatar = avatar;
     this.$apply();
@@ -327,6 +341,7 @@ export default class AddJob extends wepy.page {
 
   //上传图片文件，官方uploadFile不能多文件上传，注意返回数据要JSON.parse转为JSON
   async upload_file(filePath) {
+    let that = this;
     let res = await wepy.uploadFile({
       name: 'image',
       filePath,
@@ -335,24 +350,8 @@ export default class AddJob extends wepy.page {
 
     if (res.statusCode == 200) {
       const redata = JSON.parse(res.data);
-      this.data.file_urls.push(redata.data);
+      that.file_urls.push(redata.data);
     }
-  }
-
-  // 获取用户数据
-  async getLeaderboards() {
-    wepy.request({
-      method: 'GET',
-      url: `${BaseURL}/auth/user/leaderboards`,
-      header: await this.$parent.authHeader(),
-      success: res => {
-        if (res.data.leaderboards) {
-          this.ranking = res.data.ranking;
-          this.leaderboards = res.data.leaderboards;
-          this.$apply();
-        }
-      }
-    });
   }
 
   onShareAppMessage(res) {
