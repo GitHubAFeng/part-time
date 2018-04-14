@@ -174,6 +174,7 @@ export default class AddJob extends wepy.page {
     sex: 1,
     isAgree: false,
     files: [],
+    file_urls:[],
     curLength: 0
   };
 
@@ -182,7 +183,7 @@ export default class AddJob extends wepy.page {
       console.log('表单内容：', e.detail.value);
       let _this = this;
 
-      const form_data = {
+      let form_data = {
         detail: e.detail.value.detail,
         start: `${_this.start.date} ${_this.start.time}`,
         end: `${_this.end.date} ${_this.end.time}`,
@@ -214,7 +215,7 @@ export default class AddJob extends wepy.page {
         }
       ];
 
-      if (!_this.check(rules)) return false;
+      // if (!_this.check(rules)) return false;
 
       if (!_this.isAgree) {
         Tips.alert('请同意相关条款！');
@@ -222,6 +223,10 @@ export default class AddJob extends wepy.page {
       }
 
       Tips.loading();
+
+      // console.log('file_urls = ', this.data.file_urls);
+      form_data.images = JSON.stringify(this.data.file_urls);
+
       const result = TaskApi.add(form_data);
       result.then(v => {
         console.log(v);
@@ -307,18 +312,20 @@ export default class AddJob extends wepy.page {
 
   async chooseImage(type) {
     let res = await wepy.chooseImage({
+      count: 1,
       sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
       // sourceType: ['album', 'camera'] // 可以指定来源是相册还是相机，默认二者都有
       sourceType: [type]
     });
 
+    // 选择后立即上传
     this.upload_file(res.tempFilePaths[0]);
 
     this.files = this.files.concat(res.tempFilePaths);
     this.$apply();
   }
 
-  //上传图片文件
+  //上传图片文件，官方uploadFile不能多文件上传，注意返回数据要JSON.parse转为JSON
   async upload_file(filePath) {
     let res = await wepy.uploadFile({
       name: 'image',
@@ -326,16 +333,10 @@ export default class AddJob extends wepy.page {
       url: `${BaseURL}/task/upload`
     });
 
-    console.log('upload_file  res= ', res);
     if (res.statusCode == 200) {
-      console.log('upload_file  成功= ', res.data);
+      const redata = JSON.parse(res.data);
+      this.data.file_urls.push(redata.data);
     }
-
-    // res.then(v => {
-    //   console.log('upload_file  成功= ', v);
-    // }).catch((e)=>{
-    //   console.log('upload_file  失败= ', e);
-    // })
   }
 
   // 获取用户数据
