@@ -2,13 +2,13 @@
     <view class="">
         <view class="weui-panel__bd">
             <repeat for="{{list}}" key="index" index="index" item="item">
-                <navigator url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+                <navigator url="/pages/task_detail?id={{item.id}}" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
                     <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
                         <image class="weui-media-box__thumb" src="{{item.user_avatar}}" />
                     </view>
                     <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
                         <view class="weui-media-box__title">{{ item.title }}</view>
-                        <view class="weui-media-box__desc">{{ item.detail }}</view>
+                        <view class="weui-media-box__desc">{{ item.desc }}</view>
                     </view>
                 </navigator>
             </repeat>
@@ -26,15 +26,6 @@ export default class taskList extends wepy.component {
   onLoad() {}
 
   methods = {};
-
-  filters = {
-    reMsg(v) {
-      if (v != null && v.length > 0) {
-        return v + '…';
-      }
-      return '';
-    }
-  };
 
   computed = {};
 }

@@ -5,7 +5,7 @@ import 'wepy-async-function'; //允许使用async/await语法
 
 export default class extends wepy.app {
   config = {
-    pages: ['pages/index', 'pages/joblist', 'pages/addjob'],
+    pages: ['pages/index', 'pages/joblist', 'pages/addjob', 'pages/task_detail'],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#69c3aa',
@@ -165,10 +165,10 @@ export default class extends wepy.app {
     return {
       path: `/pages/index?inviter=${this.globalData.user.id}`,
       imageUrl,
-      title: '试试你的演技值多少分',
+      title: '让更多朋友知道~',
       fail: res => {
         wepy.showToast({
-          title: '装逼失败 请重试',
+          title: '分享失败请重试',
           icon: 'none'
         });
       }

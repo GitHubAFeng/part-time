@@ -49,7 +49,7 @@ export default class Tool {
     }
 
     // 格式化日期
-    static dateFormate(date, fmt) {
+    static dateFormate(date, fmt = 'yyyy-MM-dd h:m:s') {
         const o = {
             'M+': date.getMonth() + 1,
             'd+': date.getDate(),
@@ -65,4 +65,19 @@ export default class Tool {
         }
         return fmt;
     }
+
+    static timeFormate(timestamp) {
+        let d = new Date(timestamp); //根据时间戳生成的时间对象
+        let date = (d.getFullYear()) + "-" + 
+        (d.getMonth() + 1) + "-" +
+        (d.getDate()) + " " + 
+        (d.getHours()) + ":" + 
+        (d.getMinutes()) + ":" + 
+        (d.getSeconds());
+
+        return date;
+    }
+
+
+
 }

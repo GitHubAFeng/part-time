@@ -38,6 +38,14 @@ export default class task extends base {
   }
 
   /**
+ * 获取任务明细
+ */
+  static get_detail(id) {
+    const url = `${this.baseUrl}/task/getdetail?id=${id}`;
+    return this.get(url);
+  }
+
+  /**
    * 删除
    */
   static remove(id) {
