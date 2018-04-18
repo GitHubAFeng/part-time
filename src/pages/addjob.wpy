@@ -1,7 +1,7 @@
 <template>
   <view class="container">
     <view class="user-box">
-      <image class="logo" src="{{ user.avatar }}"/>
+      <image class="logo" src="{{ user.avatar }}" />
       <!-- <text class="level" wx:if="{{ ranking > 0 }}">排名: 第 {{ ranking }}</text> -->
     </view>
     <view class="content">
@@ -12,19 +12,19 @@
       <view class="bd">
         <scroll-view class="scroller" scroll-y>
           <view class="leaderboards">
-              <form @submit="confirm">
-                <view class="weui-cells-form">
-                    <!--联系人-->
-                    <view class="weui-cell weui-cell_input">
-                        <view class="weui-cell__hd">
-                            <view class="weui-label iconfont">&#xe612; 联系人</view>
-                        </view>
-                        <view class="weui-cell__bd">
-                            <input class="weui-input" name="name" placeholder="您的姓名" maxlength="5" value=""/>
-                        </view>
-                    </view>
-                    <!--性别-->
-                    <view class="weui-cell weui-cells_after-title">
+            <form @submit="confirm">
+              <view class="weui-cells-form">
+                <!--联系人-->
+                <view class="weui-cell weui-cell_input">
+                  <view class="weui-cell__hd">
+                    <view class="weui-label iconfont">&#xe612; 联系人</view>
+                  </view>
+                  <view class="weui-cell__bd">
+                    <input class="weui-input" name="name" placeholder="您的姓名" maxlength="5" value="" />
+                  </view>
+                </view>
+                <!--性别-->
+                <!-- <view class="weui-cell weui-cells_after-title">
                         <view class="weui-cell__hd">
                             <view class="weui-label iconfont">&#xe7f8; 称呼</view>
                         </view>
@@ -42,18 +42,32 @@
                             </radio-group>
                             </view>
                         </view>
-                    </view>
-                    <!--联系电话-->
-                    <view class="weui-cell weui-cell_input">
-                        <view class="weui-cell__hd">
-                            <view class="weui-label iconfont">&#xe616; 联系电话</view>
-                        </view>
-                        <view class="weui-cell__bd">
-                            <input class="weui-input" name="phone" placeholder="您的手机号码" type="number" maxlength="11" value=""/>
-                        </view>
-                    </view>
+                    </view> -->
+                <!--联系电话-->
+                <view class="weui-cell weui-cell_input">
+                  <view class="weui-cell__hd">
+                    <view class="weui-label iconfont">&#xe616; 联系电话</view>
+                  </view>
+                  <view class="weui-cell__bd">
+                    <input class="weui-input" name="phone" placeholder="您的手机号码" type="number" maxlength="11" value="" />
+                  </view>
+                </view>
 
-                    <view class="weui-cell weui-cell_input">
+                <view class="weui-cell weui-cell_input">
+                  <view class="weui-cell__hd">
+                    <view class="weui-label iconfont">&#xe68c; 有效期</view>
+                  </view>
+                  <view class="weui-cell__bd weui-flex">
+                    <picker class="weui-flex__item" mode="date" value="{{date}}" start="2018-01-01" end="2020-01-01" @change="bindStartDateChange">
+                      <input class="weui-input" name="startdate" placeholder="请确定开始日期" type="text" value="{{start.date}}" disabled/>
+                    </picker>
+                    <picker class="weui-flex__item" mode="date" value="{{time}}" start="2018-01-01" end="2020-01-01" @change="bindEndDateChange">
+                      <input class="weui-input" name="enddate" placeholder="请确定结束日期" type="text" value="{{end.date}}" disabled/>
+                    </picker>
+                  </view>
+                </view>
+
+                <!-- <view class="weui-cell weui-cell_input">
                       <view class="weui-cell__hd">
                         <view class="weui-label iconfont">&#xe68c; 开始时间</view>
                       </view>
@@ -80,72 +94,73 @@
                               <input class="weui-input" name="endtime" placeholder="请确定时间" type="text"  value="{{end.time}}" disabled/>
                           </picker>
                         </view>
-                    </view>
+                    </view> -->
 
-                    <view class="weui-cell weui-cell_input">
-                        <view class="weui-cell__hd">
-                            <view class="weui-label iconfont">&#xe612; 标题</view>
-                        </view>
-                        <view class="weui-cell__bd">
-                            <input class="weui-input" name="title" placeholder="请填写任务标题" maxlength="20" value=""/>
-                        </view>
-                    </view>
-
-                    <!--详细内容-->
-                    <view class="weui-cell weui-cells_after-title">
-                        <view class="weui-cell__hd">
-                            <view class="weui-label iconfont">&#xe618; 详细内容</view>
-                        </view>
-                        <view class="weui-cell__bd">
-                            <input class="weui-input" style="height: 3.3em" name="detail" placeholder="请输入内容…" value="" maxlength="300" bindinput="bindInputCount" />
-                            <view class="weui-textarea-counter">{{curLength}}/300</view>
-                        </view>
-                    </view>
-
-                    <view class="weui-cell weui-cells_after-title">
-                        <view class="weui-cell__bd">
-                            <view class="weui-uploader">
-                                <view class="weui-uploader__hd">
-                                    <view class="weui-uploader__title">图片上传</view>
-                                    <view class="weui-uploader__info">{{files.length}}/3</view>
-                                </view>
-                                <view class="weui-uploader__bd">
-                                    <view class="weui-uploader__files" id="uploaderFiles">
-                                        <block wx:for="{{files}}" wx:key="*this">
-                                            <view class="weui-uploader__file" @tap="previewImage" id="{{item}}">
-                                                <image class="weui-uploader__img" src="{{item}}" mode="aspectFill" />
-                                            </view>
-                                        </block>
-                                    </view>
-                                    <view class="weui-uploader__input-box">
-                                        <view class="weui-uploader__input" @tap="chooseImageTap"></view>
-                                    </view>
-                                </view>
-                            </view>
-                        </view>
-                    </view>
-
-                    <checkbox-group @change="bindAgreeChange">
-                        <label class="weui-agree" for="weuiAgree">
-                            <view class="weui-agree__text">
-                                <checkbox class="weui-agree__checkbox" id="weuiAgree" value="agree" checked="{{isAgree}}" />
-                                <view class="weui-agree__checkbox-icon">
-                                    <icon class="weui-agree__checkbox-icon-check" type="success_no_circle" size="9" wx:if="{{isAgree}}"></icon>
-                                </view>
-                                阅读并同意<navigator url="" class="weui-agree__link">《相关条款》</navigator>
-                            </view>
-                        </label>
-                    </checkbox-group>
-
-                    <!--操作栏-->
-                    <view class="weui-btn-area">
-                        <button class="weui-btn" type="primary" style="background: #69c3aa;height: 85rpx;border-radius: 100rpx;" form-type="submit">发布</button>
-                    </view>
-
+                <view class="weui-cell weui-cell_input">
+                  <view class="weui-cell__hd">
+                    <view class="weui-label iconfont">&#xe612; 标题</view>
+                  </view>
+                  <view class="weui-cell__bd">
+                    <input class="weui-input" name="title" placeholder="请填写任务标题" maxlength="20" value="" />
+                  </view>
                 </view>
-              </form>
+
+                <!--详细内容-->
+                <view class="weui-cell weui-cells_after-title">
+                  <view class="weui-cell__hd">
+                    <view class="weui-label iconfont">&#xe618; 详细内容</view>
+                  </view>
+                  <view class="weui-cell__bd">
+                    <input class="weui-input" style="height: 3.3em" name="detail" placeholder="请输入内容…" value="" maxlength="300" bindinput="bindInputCount" />
+                    <view class="weui-textarea-counter">{{curLength}}/300</view>
+                  </view>
+                </view>
+
+                <view class="weui-cell weui-cells_after-title">
+                  <view class="weui-cell__bd">
+                    <view class="weui-uploader">
+                      <view class="weui-uploader__hd">
+                        <view class="weui-uploader__title">图片上传</view>
+                        <view class="weui-uploader__info">{{files.length}}/3</view>
+                      </view>
+                      <view class="weui-uploader__bd">
+                        <view class="weui-uploader__files" id="uploaderFiles">
+                          <block wx:for="{{files}}" wx:key="*this">
+                            <view class="weui-uploader__file" @tap="previewImage" id="{{item}}">
+                              <image class="weui-uploader__img" src="{{item}}" mode="aspectFill" />
+                            </view>
+                          </block>
+                        </view>
+                        <view class="weui-uploader__input-box">
+                          <view class="weui-uploader__input" @tap="chooseImageTap"></view>
+                        </view>
+                      </view>
+                    </view>
+                  </view>
+                </view>
+
+                <checkbox-group @change="bindAgreeChange">
+                  <label class="weui-agree" for="weuiAgree">
+                    <view class="weui-agree__text">
+                      <checkbox class="weui-agree__checkbox" id="weuiAgree" value="agree" checked="{{isAgree}}" />
+                      <view class="weui-agree__checkbox-icon">
+                        <icon class="weui-agree__checkbox-icon-check" type="success_no_circle" size="9" wx:if="{{isAgree}}"></icon>
+                      </view>
+                      阅读并同意
+                      <navigator url="" class="weui-agree__link">《相关条款》</navigator>
+                    </view>
+                  </label>
+                </checkbox-group>
+
+                <!--操作栏-->
+                <view class="weui-btn-area">
+                  <button class="weui-btn" type="primary" style="background: #69c3aa;height: 85rpx;border-radius: 100rpx;" form-type="submit">发布</button>
+                </view>
+
+              </view>
+            </form>
           </view>
-         </scroll-view>
+        </scroll-view>
         <text class="tail">请认真查阅注意事项</text>
       </view>
     </view>
@@ -175,6 +190,8 @@ export default class AddJob extends wepy.page {
     angle: 0,
     user: {
       title: '',
+      avatar: '',
+      sex: 1,
       record: 0
     },
     start: { date: '', time: '' },
@@ -191,11 +208,14 @@ export default class AddJob extends wepy.page {
       console.log('表单内容：', e.detail.value);
       let _this = this;
 
+      // start: `${_this.start.date} ${_this.start.time}`,
+      // end: `${_this.end.date} ${_this.end.time}`,
+      // sex: _this.sex,
       let form_data = {
         detail: e.detail.value.detail,
-        start: `${_this.start.date} ${_this.start.time}`,
-        end: `${_this.end.date} ${_this.end.time}`,
-        sex: _this.sex,
+        start: _this.start.date,
+        end: _this.end.date,
+        sex: _this.user.sex,
         phone: e.detail.value.phone,
         name: _this.trim(e.detail.value.name),
         user_avatar: _this.user.avatar,
@@ -321,6 +341,7 @@ export default class AddJob extends wepy.page {
   async onLoad(options) {
     const { avatar } = await this.$parent.globalData.user;
     this.user.avatar = avatar;
+    this.user.sex = gender;
     this.$apply();
   }
 

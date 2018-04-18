@@ -1,7 +1,7 @@
 <template>
   <view class="container">
     <view class="user-box">
-      <image class="logo" src="{{ user.avatar }}"/>
+      <image class="logo" src="{{ user.avatar }}" />
       <!-- <text class="level" wx:if="{{ ranking > 0 }}">排名: 第 {{ ranking }}</text> -->
     </view>
     <view class="content">
@@ -10,15 +10,21 @@
         <image class="wave wave-bg" src="/style/image/wave.png" mode="aspectFill" />
       </view>
       <view class="bd">
-        <scroll-view class="scroller" scroll-y>
+        <scroll-view class="scroller" enable-back-to-top="true" scroll-y="true" upper-threshold="50" lower-threshold="100" bindscrolltolower="scrolltolower">
           <view class="leaderboards">
             <taskListCom :list.sync="tasklist"></taskListCom>
           </view>
-         </scroll-view>
+        </scroll-view>
         <text class="tail">请认真查阅注意事项</text>
       </view>
     </view>
   </view>
+
+  <!--页面底部加载更多时的动画-->
+  <bottomLoadMore :show.sync="showLoading" message="正在加载"></bottomLoadMore>
+  <!--暂无数据时显示-->
+  <placeholder :show.sync="is_empty" message="暂无发现数据"></placeholder>
+
 </template>
 
 <script>
@@ -26,6 +32,8 @@ import wepy from 'wepy';
 import { BaseURL } from '../config';
 import TaskApi from '../api/task';
 import Tips from '../utils/Tips';
+import bottomLoadMore from '../components/bottom_load_more';
+import placeholder from '../components/Placeholder';
 import taskListCom from '../components/taskList';
 
 export default class JobList extends wepy.page {
@@ -43,11 +51,21 @@ export default class JobList extends wepy.page {
     user: {
       title: '',
       record: 0
-    }
+    },
+    //是否显示 底部loading
+    showLoading: true,
+    //当前页面
+    currentPage: 1,
+    //总页数
+    page_total: 0,
+    //是否没有更多数据
+    is_empty: false
   };
 
   components = {
-    taskListCom
+    taskListCom,
+    bottomLoadMore,
+    placeholder
   };
 
   async onLoad(options) {
@@ -55,13 +73,21 @@ export default class JobList extends wepy.page {
     const { avatar } = await this.$parent.globalData.user;
     this.user.avatar = avatar;
 
-    const result = TaskApi.infoList();
-    result.then(v => {
-      that.tasklist = v.data;
-      console.log('this.data.tasklist  = ', that.tasklist);
-      that.$apply();
-    });
+    this.currentPage = 1;
+    this.getList();
   }
+
+  methods = {
+    scrolltolower: function(e) {
+      console.log('home-scrolltolower');
+      let that = this;
+      //是否显示 底部loading
+      this.showLoading = true;
+      this.is_empty = false;
+      that.currentPage++;
+      that.getList(that.currentPage);
+    }
+  };
 
   onShareAppMessage(res) {
     return this.$parent.shareAppMessage();
@@ -78,6 +104,30 @@ export default class JobList extends wepy.page {
       if (this.angle !== angle) {
         this.angle = angle;
       }
+    });
+  }
+
+  //取列表数据
+  async getList(currentPage, size) {
+    let that = this;
+    that.showLoading = true;
+
+    const result = TaskApi.infoList({
+      page: currentPage || 1,
+      size: size || 10
+    });
+    result.then(v => {
+      const keys = Object.keys(v.data);
+      console.log('keys  = ', keys);
+      if (keys.length === 0) {
+        //暂无数据
+        that.is_empty = true;
+      } else {
+        that.tasklist = [...that.tasklist, ...v.data];
+        console.log('this.data.tasklist  = ', that.tasklist);
+      }
+      that.showLoading = false;
+      that.$apply();
     });
   }
 }

@@ -43,41 +43,6 @@ export default class Tool {
     static isArray(o) {
         return Object.prototype.toString.call(o) === '[object Array]';
     }
-    // 事件转日期
-    static convertTimestapeToDay(timestape) {
-        return timestape.substring(0, timestape.indexOf(' ')).replace(/-/g, '.');
-    }
-
-    // 格式化日期
-    static dateFormate(date, fmt = 'yyyy-MM-dd h:m:s') {
-        const o = {
-            'M+': date.getMonth() + 1,
-            'd+': date.getDate(),
-            'h+': date.getHours(),
-            'm+': date.getMinutes(),
-            's+': date.getSeconds(),
-            'q+': Math.floor((date.getMonth() + 3) / 3),
-            'S': date.getMilliseconds()
-        };
-        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
-        for (let k in o) {
-            if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)));
-        }
-        return fmt;
-    }
-
-    static timeFormate(timestamp) {
-        let d = new Date(timestamp); //根据时间戳生成的时间对象
-        let date = (d.getFullYear()) + "-" + 
-        (d.getMonth() + 1) + "-" +
-        (d.getDate()) + " " + 
-        (d.getHours()) + ":" + 
-        (d.getMinutes()) + ":" + 
-        (d.getSeconds());
-
-        return date;
-    }
-
 
 
 }
