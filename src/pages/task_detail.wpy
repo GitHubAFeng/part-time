@@ -2,7 +2,7 @@
   <view class="container">
     <view class="user-box">
       <image class="logo" src="{{ user.avatar }}" />
-      <!-- <text class="level" wx:if="{{ ranking > 0 }}">排名: 第 {{ ranking }}</text> -->
+      <whale :show.sync="true"></whale>
     </view>
     <view class="content">
       <view class="hd" style="transform:rotateZ({{angle}}deg);">
@@ -15,8 +15,8 @@
             <view class="weui-cells-form">
               <view class="weui-cell">
                 <view class="weui-label iconfont">&#xe612; 联系方式</view>
-                <view class="weui-label">{{info.name}} ({{info.sex}})  {{info.phone}}</view>
-                <!-- <view class="weui-label">{{info.phone}}</view> -->
+                <view class="weui-label">{{info.name}} ({{info.sex}})</view>
+                <view class="weui-label">{{info.phone}}</view>
               </view>
               <view class="weui-cell">
                 <view class="weui-label iconfont">&#xe68c; 有效期</view>
@@ -33,7 +33,7 @@
                   </view>
                   <view class="weui-article__p" style="margin-left:30rpx;">
                     <repeat for="{{info.images}}" key="index" index="index" item="item">
-                      <image class="weui-article__img" src="{{item}}" mode="widthFix" style="width:600rpx;" lazy-load="true" />
+                      <image class="weui-article__img" src="{{item}}" mode="widthFix" style="width:600rpx;margin:0 auto;" lazy-load="true" />
                     </repeat>
                   </view>
                 </view>
@@ -53,6 +53,7 @@ import wepy from 'wepy';
 import { BaseURL } from '../config';
 import TaskApi from '../api/task';
 import Tips from '../utils/Tips';
+import whale from '../components/whale';
 
 export default class TaskDeasil extends wepy.page {
   config = {
@@ -81,7 +82,9 @@ export default class TaskDeasil extends wepy.page {
     }
   };
 
-  computed = {};
+  components = {
+    whale
+  };
 
   async onLoad(options) {
     let that = this;

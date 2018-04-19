@@ -20,19 +20,19 @@ export default class bottomLoadMore extends wepy.component {
 </script>
 <style lang="less">
 .loadMoreGif {
-    margin: 15rpx auto;
-    width: 220rpx;
+    background-color: #f4f4f4;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     text {
-        font-size: 30rpx;
+        font-size: 25rpx;
         color: #999;
         margin-left: 10rpx;
     }
     image {
-        width: 30rpx;
-        height: 30rpx;
+        width: 100rpx;
+        height: 100rpx;
     }
 }
 </style>

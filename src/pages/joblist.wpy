@@ -2,7 +2,7 @@
   <view class="container">
     <view class="user-box">
       <image class="logo" src="{{ user.avatar }}" />
-      <!-- <text class="level" wx:if="{{ ranking > 0 }}">排名: 第 {{ ranking }}</text> -->
+      <whale :show.sync="true"></whale>
     </view>
     <view class="content">
       <view class="hd" style="transform:rotateZ({{angle}}deg);">
@@ -21,9 +21,9 @@
   </view>
 
   <!--页面底部加载更多时的动画-->
-  <bottomLoadMore :show.sync="showLoading" message="正在加载"></bottomLoadMore>
+  <bottomLoadMore :show.sync="showLoading" message="正在加载中"></bottomLoadMore>
   <!--暂无数据时显示-->
-  <placeholder :show.sync="is_empty" message="暂无发现数据"></placeholder>
+  <placeholder :show.sync="is_empty" message="暂无更多任务"></placeholder>
 
 </template>
 
@@ -35,6 +35,7 @@ import Tips from '../utils/Tips';
 import bottomLoadMore from '../components/bottom_load_more';
 import placeholder from '../components/Placeholder';
 import taskListCom from '../components/taskList';
+import whale from '../components/whale';
 
 export default class JobList extends wepy.page {
   config = {
@@ -65,7 +66,8 @@ export default class JobList extends wepy.page {
   components = {
     taskListCom,
     bottomLoadMore,
-    placeholder
+    placeholder,
+    whale
   };
 
   async onLoad(options) {

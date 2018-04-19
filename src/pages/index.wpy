@@ -1,12 +1,14 @@
 <template>
   <view class="container">
     <view class="cloud-box">
-      <image class="corel" src="/style/corel.png" />
-      <image class="cloud-4"  src="/style/image/cloud.png" />
-      <image class="cloud-5"  src="/style/image/cloud.png" />
-      <image class="cloud-6"  src="/style/image/cloud.png" />
+      <image class="{{is_go?'corel-go':'corel'}}" src="/style/corel.png" @tap="go" />
+      <image class="cloud-4" src="/style/image/cloud.png" />
+      <image class="cloud-5" src="/style/image/cloud.png" />
+      <image class="cloud-6" src="/style/image/cloud.png" />
+      <text class="tip">{{message}}</text>
+
     </view>
-    
+
     <view class="top-box">
       <image class="logo" src="{{ user.avatar }}" />
       <text class="level">{{ user.nickname }}</text>
@@ -24,7 +26,7 @@
         <text class="tail">请认真查阅注意事项</text>
       </view>
     </view>
-    
+
   </view>
 </template>
 
@@ -47,8 +49,28 @@ export default class Index extends wepy.page {
       title: '',
       record: 0
     },
-    winWidth: 0
-    // animationData:{},
+    winWidth: 0,
+    is_go: false,
+    message: ''
+    // animationData: {}
+  };
+
+  methods = {
+    go() {
+      const that = this;
+      if (this.is_go) {
+        return;
+      }
+
+      that.is_go = true;
+      that.message = '我有一个梦想，要爬上很高很高的地方，看看最美丽的世界';
+      this.$apply();
+      setTimeout(() => {
+        that.message = '';
+        that.is_go = false;
+        that.$apply();
+      }, 5000);
+    }
   };
 
   async onLoad(options) {
@@ -308,6 +330,14 @@ export default class Index extends wepy.page {
   color: @white;
 }
 
+.tip {
+  font-size: 25rpx;
+  color: #f4f4f4;
+  position: absolute;
+  margin-left: 45rpx;
+  margin-top: 45rpx;
+}
+
 .cloud-box {
   display: flex;
   flex-direction: column;
@@ -328,6 +358,15 @@ export default class Index extends wepy.page {
     // animation-iteration-count:infinite;
     // animation-fill-mode:forwards;
     // animation-direction:normal;
+  }
+
+  .corel-go {
+    margin-top: 10%;
+    margin-left: 60%;
+    width: @corel-width;
+    height: @corel-height;
+    justify-content: center;
+    animation: corel-go 5s linear 1;
   }
 
   .cloud-6 {
@@ -383,6 +422,37 @@ export default class Index extends wepy.page {
 
   50% {
     transform: translate3d(0, 30rpx, 0);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes corel-go {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  20% {
+    transform: translate3d(-550rpx, 0, 0);
+  }
+
+  20.5% {
+    opacity: 1;
+  }
+
+  21% {
+    opacity: 0;
+  }
+
+  69% {
+    opacity: 0;
+  }
+
+  70% {
+    transform: translate3d(150rpx, 0, 0);
+    opacity: 1;
   }
 
   100% {

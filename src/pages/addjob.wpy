@@ -2,7 +2,7 @@
   <view class="container">
     <view class="user-box">
       <image class="logo" src="{{ user.avatar }}" />
-      <!-- <text class="level" wx:if="{{ ranking > 0 }}">排名: 第 {{ ranking }}</text> -->
+      <whale :show.sync="true"></whale>
     </view>
     <view class="content">
       <view class="hd" style="transform:rotateZ({{angle}}deg);">
@@ -173,6 +173,7 @@ import { BaseURL } from '../config/index';
 import TaskApi from '../api/task';
 import Tips from '../utils/Tips';
 import checkInput from '../mixins/CheckInputMixin';
+import whale from '../components/whale';
 
 export default class AddJob extends wepy.page {
   config = {
@@ -201,6 +202,10 @@ export default class AddJob extends wepy.page {
     files: [],
     file_urls: [],
     curLength: 0
+  };
+
+  components = {
+    whale
   };
 
   methods = {
@@ -339,7 +344,7 @@ export default class AddJob extends wepy.page {
   };
 
   async onLoad(options) {
-    const { avatar } = await this.$parent.globalData.user;
+    const { avatar, gender } = await this.$parent.globalData.user;
     this.user.avatar = avatar;
     this.user.sex = gender;
     this.$apply();

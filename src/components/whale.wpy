@@ -1,0 +1,94 @@
+<template>
+    <view class="empty-whale" wx:if="{{show}}">
+        <text>{{message}}</text>
+        <image animation="{{animationData}}" src="{{url}}" @tap="go" />
+    </view>
+</template>
+<script>
+import wepy from 'wepy';
+export default class whale extends wepy.component {
+  data = {
+    url: '../style/icon/whale-wave.gif',
+    is_play: false,
+    url_index: 0,
+    animationData: {},
+    text_show: false
+  };
+
+  props = {
+    show: {
+      type: Boolean,
+      default: true
+    },
+    message: {
+      default: ''
+    }
+  };
+
+  methods = {
+    go() {
+      const that = this;
+
+      if (this.is_play) {
+        that.message = '别乱点，忙着呢';
+        that.$apply();
+        setTimeout(() => {
+          that.message = '';
+          that.$apply();
+        }, 2000);
+        return;
+      }
+      this.url =
+        this.url_index % 2 == 0
+          ? '../style/icon/whale-water.gif?_=' + Math.random()
+          : '../style/icon/whale-jump.gif?_=' + Math.random();
+      this.is_play = true;
+      this.url_index++;
+      this.$apply();
+
+      console.log('go =', this.url);
+      setTimeout(() => {
+        that.url = '../style/icon/whale-wave.gif?_=' + Math.random();
+        this.is_play = false;
+        that.$apply();
+        console.log('rego =', that.url);
+      }, 4000);
+    }
+  };
+}
+</script>
+<style lang="less" scoped>
+.empty-whale {
+  margin-top: 30rpx;
+  height: 100rpx;
+  width: 100%;
+  flex:1;
+}
+
+text {
+  font-size: 25rpx;
+  color: #f4f4f4;
+  margin-left: 300rpx;
+}
+
+image {
+  width: 450rpx;
+  height: 160rpx;
+  display: block;
+  margin: 0 auto;
+  animation: whaleshow 3s linear 1 forwards;
+}
+
+@keyframes whaleshow {
+  0% {
+    opacity: 0;
+  }
+
+  80% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+</style>
