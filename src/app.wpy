@@ -5,7 +5,12 @@ import 'wepy-async-function'; //允许使用async/await语法
 
 export default class extends wepy.app {
   config = {
-    pages: ['pages/index', 'pages/joblist', 'pages/addjob', 'pages/task_detail'],
+    pages: [
+      'pages/index',
+      'pages/joblist',
+      'pages/addjob',
+      'pages/task_detail'
+    ],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#69c3aa',
@@ -56,7 +61,7 @@ export default class extends wepy.app {
   async onLaunch() {
     wepy.showShareMenu();
 
-    // this.login();
+    this.login();
     console.log('onLaunch = APP启动完成');
   }
 
@@ -132,8 +137,7 @@ export default class extends wepy.app {
       avatar: avatarUrl,
       gender,
       country,
-      nickname: nickName,
-      openid: this.globalData.token
+      nickname: nickName
     };
     const update_param = {
       url: `${BaseURL}/user/update`,

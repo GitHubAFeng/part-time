@@ -63,7 +63,7 @@ export default class Index extends wepy.page {
       }
 
       that.is_go = true;
-      that.message = '我有一个梦想，要爬上很高很高的地方，看看最美丽的世界';
+      that.message = '我有一个梦想，要上去那很高很高的地方，看更大的世界';
       this.$apply();
       setTimeout(() => {
         that.message = '';

@@ -10,17 +10,24 @@
         <image class="wave wave-bg" src="/style/image/wave.png" mode="aspectFill" />
       </view>
       <view class="bd">
-        <scroll-view class="scroller" scroll-y>
+        <scroll-view class="scroller" bindscroll="scroll" scroll-top="{{scrollTop}}" upper-threshold="50" lower-threshold="100" bindscrolltolower="scrolltolower" scroll-y>
           <view class="page__bd">
             <view class="weui-cells-form">
               <view class="weui-cell">
-                <view class="weui-label iconfont">&#xe612; 联系方式</view>
-                <view class="weui-label">{{info.name}} ({{info.sex}})</view>
-                <view class="weui-label">{{info.phone}}</view>
+                <view class="weui-label iconfont" style="width:10%;font-size:20px;">&#xe612;</view>
+                <view class="weui-label" style="flex:1;">发布人：{{info.name}} ({{info.sex}})</view>
               </view>
               <view class="weui-cell">
-                <view class="weui-label iconfont">&#xe68c; 有效期</view>
-                <view class="weui-label" style="width:400rpx;">{{info.start_time}} 至 {{info.end_time}}</view>
+                <view class="weui-label iconfont" style="width:10%;font-size:20px;">&#xe616;</view>
+                <view style="flex:1;display:flex;flex-direction:row;">
+                  <view class="weui-label">微信：{{info.wechat}}</view>
+                  <view class="weui-label">电话：{{info.phone}}</view>
+                </view>
+
+              </view>
+              <view class="weui-cell">
+                <view class="weui-label iconfont" style="width:10%;font-size:20px;">&#xe68c;</view>
+                <view class="weui-label" style="flex:1;">有效期：{{info.start_time}} 至 {{info.end_time}}</view>
               </view>
               <view class="weui-cell"></view>
             </view>
@@ -40,9 +47,24 @@
               </view>
             </view>
           </view>
+
+          <text class="mark">评论</text>
+          <view class="comments-list">
+            <commentsList :list.sync="comlist"></commentsList>
+          </view>
+
         </scroll-view>
+
         <text class="tail">请认真查阅注意事项</text>
       </view>
+    </view>
+    <view class="goTop" style="display:{{is_top ? 'block' : 'none'}};">
+      <image class="icon-gotop" src="../style/image/gotop.png" @tap="goTop" />
+    </view>
+    <view class="comments_in">
+      <view class="weui-label iconfont" style="width:8%;padding:0 10rpx;font-size:25px;">&#xe8ab;</view>
+      <input class="comments_input" placeholder="说些什么吧？" bindinput="bindKeyInput" @tap="oncomments" focus="{{focus}}" />
+      <view class="weui-label iconfont" style="width:10%;padding:0 10rpx;font-size:25px;" @tap="oncommentsgo">&#xe642;</view>
     </view>
   </view>
 </template>
@@ -52,8 +74,10 @@
 import wepy from 'wepy';
 import { BaseURL } from '../config';
 import TaskApi from '../api/task';
+import CommentsApi from '../api/comments';
 import Tips from '../utils/Tips';
 import whale from '../components/whale';
+import commentsList from '../components/comments_list';
 
 export default class TaskDeasil extends wepy.page {
   config = {
@@ -64,6 +88,13 @@ export default class TaskDeasil extends wepy.page {
   };
 
   data = {
+    currentPage: 1,
+    comlist: [],
+    task_id: 0,
+    focus: false,
+    is_top: false,
+    is_input: false,
+    scrollTop: 0,
     ranking: 0,
     angle: 0,
     user: {
@@ -78,23 +109,81 @@ export default class TaskDeasil extends wepy.page {
       phone: '',
       sex: '',
       name: '',
+      wechat: '',
       images: []
-    }
+    },
+    inputValue: ''
   };
 
   components = {
-    whale
+    whale,
+    commentsList
   };
+
+  methods = {
+    scrolltolower(e) {
+      console.log('home-scrolltolower');
+      let that = this;
+      //是否显示 底部loading
+      this.showLoading = true;
+      this.is_empty = false;
+      that.currentPage++;
+      that.getList(that.currentPage);
+    },
+    goTop() {
+      this.scrollTop = -1;
+      this.$apply();
+    },
+    scroll(e) {
+      let that = this;
+      // 容器滚动时将此时的滚动距离赋值给 this.scrollTop
+      if (e.detail.scrollTop > 200) {
+        that.is_top = true;
+      } else {
+        that.is_top = false;
+        that.scrollTop = 0;
+      }
+      this.$apply();
+    },
+    oncomments() {
+      this.focus = true;
+      console.log('oncomments  = ');
+      this.$apply();
+    },
+    oncommentsgo() {
+      let that = this;
+      if (that.inputValue) {
+        const form_data = {
+          task_id: that.task_id,
+          detail: that.inputValue
+        };
+        const result = CommentsApi.add(form_data);
+        result.then(v => {
+          console.log(v);
+          if (v.code == 0) {
+            Tips.success('评论成功');
+          } else {
+            Tips.error('评论失败，请稍后重试！');
+          }
+        });
+      }
+      console.log('oncommentsgo  = ');
+    }
+  };
+
+  bindKeyInput(e) {
+    this.inputValue = e.detail.value;
+    console.log('this.inputValue  = ', this.inputValue);
+  }
 
   async onLoad(options) {
     let that = this;
     const { avatar } = await this.$parent.globalData.user;
     this.user.avatar = avatar;
 
-    const task_id = options.id;
-    console.log('task_id  = ', task_id);
+    this.task_id = options.id;
 
-    const result = await TaskApi.get_detail(task_id);
+    const result = await TaskApi.get_detail(this.task_id);
     console.log('result  = ', result);
     this.info.title = result.data.title;
     this.info.detail = result.data.detail;
@@ -102,9 +191,14 @@ export default class TaskDeasil extends wepy.page {
     this.info.end_time = result.data.end_time;
     this.info.name = result.data.name;
     this.info.phone = result.data.phone;
+    this.info.wechat = result.data.wechat;
     this.info.sex = result.data.sex == 1 ? '先生' : '女士';
     this.info.images = JSON.parse(result.data.image);
     console.log('image  = ', this.info.images);
+
+    this.currentPage = 1;
+    this.getList();
+
     this.$apply();
   }
 
@@ -123,6 +217,31 @@ export default class TaskDeasil extends wepy.page {
       if (this.angle !== angle) {
         this.angle = angle;
       }
+    });
+  }
+
+  //取列表数据
+  async getList(currentPage, size) {
+    let that = this;
+    that.showLoading = true;
+
+    const result = CommentsApi.infoList({
+      page: currentPage || 1,
+      size: size || 10,
+      task_id: that.task_id
+    });
+    result.then(v => {
+      const keys = Object.keys(v.data);
+      console.log('keys  = ', keys);
+      if (keys.length === 0) {
+        //暂无数据
+        that.is_empty = true;
+      } else {
+        that.comlist = [...that.comlist, ...v.data];
+        console.log('this.data.comlist  = ', that.comlist);
+      }
+      that.showLoading = false;
+      that.$apply();
     });
   }
 }
@@ -309,6 +428,23 @@ export default class TaskDeasil extends wepy.page {
   text-align: center;
 }
 
+.comments_in {
+  width: 100%;
+  height: 50px;
+  align-self: flex-end;
+  display: flex;
+  z-index: 500;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.comments_input {
+  flex: 1;
+  border-radius: 100rpx;
+  border: 1rpx solid @green;
+}
+
 .record {
   font-size: 14pt;
   color: @white;
@@ -340,6 +476,29 @@ export default class TaskDeasil extends wepy.page {
   display: flex;
   flex-direction: column;
   font-size: 15pt;
+}
+
+.mark {
+  background-color: #f2f2f2;
+  font-size: 12px;
+  display: block;
+  color: #636363;
+  padding-left: 25rpx;
+}
+
+// /goTop回到顶部图标start/
+.goTop {
+  position: fixed;
+  right: 10rpx;
+  top: 800rpx;
+  z-index: 500;
+}
+
+.goTop .icon-gotop {
+  background-color: rgba(0, 0, 0, 0.1);
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
 }
 </style>
 

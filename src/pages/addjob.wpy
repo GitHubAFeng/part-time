@@ -55,6 +55,15 @@
 
                 <view class="weui-cell weui-cell_input">
                   <view class="weui-cell__hd">
+                    <view class="weui-label iconfont">&#xe628; 微信</view>
+                  </view>
+                  <view class="weui-cell__bd">
+                    <input class="weui-input" name="wechat" placeholder="您的微信号" type="text" value="" />
+                  </view>
+                </view>
+
+                <view class="weui-cell weui-cell_input">
+                  <view class="weui-cell__hd">
                     <view class="weui-label iconfont">&#xe68c; 有效期</view>
                   </view>
                   <view class="weui-cell__bd weui-flex">
@@ -224,19 +233,20 @@ export default class AddJob extends wepy.page {
         phone: e.detail.value.phone,
         name: _this.trim(e.detail.value.name),
         user_avatar: _this.user.avatar,
-        title: e.detail.value.title
+        title: e.detail.value.title,
+        wechat: e.detail.value.wechat
       };
+
+      if (form_data.wechat == '' && form_data.phone == '') {
+        Tips.alert('请填写手机号或者微信号');
+        return false;
+      }
 
       const rules = [
         {
           value: form_data.name,
           method: 'required',
           message: '请输入联系人'
-        },
-        {
-          value: form_data.phone,
-          method: 'required',
-          message: '请输入手机号码'
         },
         {
           value: form_data.phone,

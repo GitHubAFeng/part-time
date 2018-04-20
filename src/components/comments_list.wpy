@@ -1,0 +1,116 @@
+<template>
+    <view class="comments" wx:if="{{show}}">
+        <repeat for="{{list}}" key="index" index="index" item="item">
+            <view class="commentsRow">
+                <!-- 用户信息与关注 -->
+                <view class="userInfoCnt">
+                    <view class="userInfoBox">
+                        <view class="userHpBox">
+                            <image class="userAvatar" src="{{item.avatar}}" />
+                        </view>
+                        <view class="userInfoGroup">
+                            <text class="userName">{{item.nickname}}</text>
+                            <view class="timeBox">
+                                <text class="time">{{item.create_time}}</text>
+                                <!-- <text class="source">来自iPhone X</text> -->
+                            </view>
+                        </view>
+                    </view>
+                    <!-- <view class="guanzhuBtn iconfont">&#xe612; {{item.star_count}}</view> -->
+                </view>
+                <!-- 正文 -->
+                <view class="weiboDetail">
+                    {{item.detail}}
+                </view>
+            </view>
+        </repeat>
+    </view>
+</template>
+<script>
+import wepy from 'wepy';
+export default class commentsList extends wepy.component {
+  data = {};
+
+  props = {
+    show: {
+      type: Boolean,
+      default: true
+    },
+    list: {}
+  };
+
+  methods = {};
+}
+</script>
+<style lang="less" scoped>
+.comments {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+.commentsRow {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 10px solid #f2f2f2;
+}
+.userInfoCnt {
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  align-items: center;
+}
+.userInfoBox {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.userHpBox {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 10px;
+}
+
+.userAvatar {
+  width: 100rpx;
+  height: 100rpx;
+}
+
+.userInfoGroup {
+  display: flex;
+  flex-direction: column;
+}
+.userName {
+  font-size: 16px;
+  color: #fe6a00;
+  margin-bottom: 5px;
+}
+.timeBox {
+  display: flex;
+  flex-direction: row;
+}
+.time {
+  font-size: 12px;
+  color: #939393;
+  margin-right: 5px;
+}
+
+.source {
+  font-size: 12px;
+  color: #557ca7;
+}
+.guanzhuBtn {
+  font-size: 14px;
+  padding: 5px 10px;
+}
+// /* 正文 */
+.weiboDetail {
+  padding: 0 10px;
+  font-size: 16px;
+  color: #333333;
+  line-height: 1.6;
+}
+</style>
