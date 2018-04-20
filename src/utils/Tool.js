@@ -44,5 +44,10 @@ export default class Tool {
         return Object.prototype.toString.call(o) === '[object Array]';
     }
 
+    // 数组或者对象是否为空
+    static isObjNull(value) {
+        return Object.keys(value).length === 0;
+    }
+
 
 }

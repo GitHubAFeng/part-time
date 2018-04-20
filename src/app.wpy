@@ -81,7 +81,7 @@ export default class extends wepy.app {
 
   // 登录
   async login() {
-    if (this.checkAuth() && this.globalData.token) return null;
+    if (this.checkAuth() && this.globalData.token) return this.globalData.user;
 
     const { code } = await wepy.login();
     const param = {
@@ -95,7 +95,7 @@ export default class extends wepy.app {
 
     console.log('login = 微信用户登录完成');
 
-    return await this.getUserInfo();
+    return this.getUserInfo();
   }
 
   //构造权限头部，中间件，轮询token值
@@ -115,40 +115,39 @@ export default class extends wepy.app {
   // }
 
   //获取微信用户信息
-  async getUserInfo() {
-    const rawUser =
-      this.globalData.user.nickname != ''
-        ? this.globalData.user
-        : await wepy.getUserInfo();
+  getUserInfo() {
+    let that = this;
+    if (that.globalData.user.nickname == '') {
+      const user_info = wepy.getUserInfo();
+      user_info.then(res => {
+        const { avatarUrl, gender, nickName, city, country } = res.userInfo;
+        that.globalData.user.city = city;
+        that.globalData.user.gender = gender;
+        that.globalData.user.country = country;
+        that.globalData.user.avatar = avatarUrl;
+        that.globalData.user.nickname = nickName;
 
-    const { avatarUrl, gender, nickName, city, country } = rawUser.userInfo;
-    this.globalData.user.city = city;
-    this.globalData.user.gender = gender;
-    this.globalData.user.country = country;
-    this.globalData.user.avatar = avatarUrl;
-    this.globalData.user.nickname = nickName;
-
-    // 没什么用，解密出来的信息和userInfo的内容一样，我擦
-    // const wxUser = await this.decodeUserInfo(rawUser);
-
-    //更新服务端用户信息
-    const data = {
-      city,
-      avatar: avatarUrl,
-      gender,
-      country,
-      nickname: nickName
-    };
-    const update_param = {
-      url: `${BaseURL}/user/update`,
-      method: 'POST',
-      data: data,
-      header: { Authorization: 'Bearer ' + this.globalData.token }
-    };
-
-    const res = await wepy.request(update_param);
-    console.log('getUserInfo = 微信用户信息更新完成');
-    return this.globalData.user;
+        // 没什么用，解密出来的信息和userInfo的内容一样，我擦
+        // const wxUser = await this.decodeUserInfo(rawUser);
+        //更新服务端用户信息
+        const data = {
+          city,
+          avatar: avatarUrl,
+          gender,
+          country,
+          nickname: nickName
+        };
+        const update_param = {
+          url: `${BaseURL}/user/update`,
+          method: 'POST',
+          data: data,
+          header: { Authorization: 'Bearer ' + that.globalData.token }
+        };
+        wepy.request(update_param);
+        console.log('getUserInfo = 微信用户信息更新完成');
+      });
+    }
+    return that.globalData.user;
   }
 
   //服务端解密用户信息

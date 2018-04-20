@@ -1,7 +1,7 @@
 <template>
   <view class="container">
     <view class="cloud-box">
-      <image class="{{is_go?'corel-go':'corel'}}" src="/style/corel.png" @tap="go" />
+      <image class="{{is_go?'corel-go':'corel'}}" src="/style/image/corel.png" @tap="go" />
       <image class="cloud-4" src="/style/image/cloud.png" />
       <image class="cloud-5" src="/style/image/cloud.png" />
       <image class="cloud-6" src="/style/image/cloud.png" />
@@ -186,9 +186,8 @@ export default class Index extends wepy.page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  // justify-content: center;
   margin-top: -150rpx;
-  height: 50rpx;
+  height: 160rpx;
 }
 
 @keyframes rise {
@@ -230,7 +229,7 @@ export default class Index extends wepy.page {
   margin: 0 auto;
   border-radius: 160rpx;
   opacity: 0.95;
-  margin-top: 20%;
+  margin-top: 15%;
 }
 @keyframes sway {
   0% {

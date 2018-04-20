@@ -6,8 +6,8 @@
     </view>
     <view class="content">
       <view class="hd" style="transform:rotateZ({{angle}}deg);">
-        <image class="wave" src="/style/wave.png" mode="aspectFill" />
-        <image class="wave wave-bg" src="/style/wave.png" mode="aspectFill" />
+        <image class="wave" src="/style/image/wave.png" mode="aspectFill" />
+        <image class="wave wave-bg" src="/style/image/wave.png" mode="aspectFill" />
       </view>
       <view class="bd">
         <scroll-view class="scroller" scroll-y>

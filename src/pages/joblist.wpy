@@ -1,5 +1,9 @@
 <template>
   <view class="container">
+    <view class="search-box">
+      <input class="search_input" placeholder="需要点什么呢？" bindinput="bindKeyInput" @tap="onsearch" focus="{{focus}}" />
+      <view class="weui-label iconfont" style="width:10%;padding:0 10rpx;font-size:25px;" @tap="onsearchgo">&#xe642;</view>
+    </view>
     <view class="user-box">
       <image class="logo" src="{{ user.avatar }}" />
       <whale :show.sync="true"></whale>
@@ -10,7 +14,7 @@
         <image class="wave wave-bg" src="/style/image/wave.png" mode="aspectFill" />
       </view>
       <view class="bd">
-        <scroll-view class="scroller" enable-back-to-top="true" scroll-y="true" upper-threshold="50" lower-threshold="100" bindscrolltolower="scrolltolower">
+        <scroll-view class="scroller" enable-back-to-top="true" bindscroll="scroll" scroll-top="{{scrollTop}}" scroll-y="true" upper-threshold="50" lower-threshold="100" bindscrolltolower="scrolltolower">
           <view class="leaderboards">
             <taskListCom :list.sync="tasklist"></taskListCom>
           </view>
@@ -19,7 +23,10 @@
       </view>
     </view>
   </view>
-
+  <!-- 回到顶部 -->
+  <view class="goTop" style="display:{{is_top ? 'block' : 'none'}};">
+    <image class="icon-gotop" src="../style/image/gotop.png" @tap="goTop" />
+  </view>
   <!--页面底部加载更多时的动画-->
   <bottomLoadMore :show.sync="showLoading" message="正在加载中"></bottomLoadMore>
   <!--暂无数据时显示-->
@@ -46,6 +53,10 @@ export default class JobList extends wepy.page {
   };
 
   data = {
+    input_key: '',
+    focus: false,
+    scrollTop: 0,
+    is_top: false,
     tasklist: [],
     ranking: 0,
     angle: 0,
@@ -79,15 +90,54 @@ export default class JobList extends wepy.page {
     this.getList();
   }
 
+  bindKeyInput(e) {
+    this.input_key = e.detail.value;
+    // 即时搜索
+    // let that = this;
+    // this.is_empty = false;
+    // that.currentPage = 1;
+    // that.tasklist = [];
+    // that.getList(that.currentPage, 10, that.input_key);
+    // console.log('this.input_key  = ', this.input_key);
+  }
+
   methods = {
+    onsearchgo() {
+      let that = this;
+      if (that.input_key) {
+        this.is_empty = false;
+        that.currentPage = 1;
+        that.tasklist = [];
+        that.getList(that.currentPage, 10, that.input_key);
+      }
+      console.log('onsearchgo  = ');
+    },
+    onsearch() {
+      this.focus = true;
+      console.log('onsearch  = ', focus);
+      this.$apply();
+    },
     scrolltolower: function(e) {
       console.log('home-scrolltolower');
       let that = this;
-      //是否显示 底部loading
-      this.showLoading = true;
       this.is_empty = false;
       that.currentPage++;
-      that.getList(that.currentPage);
+      that.getList(that.currentPage, 10, that.input_key);
+    },
+    goTop() {
+      this.scrollTop = -1;
+      this.$apply();
+    },
+    scroll(e) {
+      let that = this;
+      // 容器滚动时将此时的滚动距离赋值给 this.scrollTop
+      if (e.detail.scrollTop > 200) {
+        that.is_top = true;
+      } else {
+        that.is_top = false;
+        that.scrollTop = 0;
+      }
+      this.$apply();
     }
   };
 
@@ -110,13 +160,14 @@ export default class JobList extends wepy.page {
   }
 
   //取列表数据
-  async getList(currentPage, size) {
+  async getList(currentPage, size, key) {
     let that = this;
     that.showLoading = true;
 
     const result = TaskApi.infoList({
       page: currentPage || 1,
-      size: size || 10
+      size: size || 10,
+      key: key || ''
     });
     result.then(v => {
       const keys = Object.keys(v.data);
@@ -354,6 +405,36 @@ export default class JobList extends wepy.page {
   display: flex;
   flex-direction: column;
   font-size: 15pt;
+}
+
+// /goTop回到顶部图标start/
+.goTop {
+  position: fixed;
+  right: 10rpx;
+  top: 800rpx;
+  z-index: 500;
+}
+
+.goTop .icon-gotop {
+  background-color: rgba(0, 0, 0, 0.1);
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+}
+
+.search-box {
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+  left: 30%;
+  position: absolute;
+  top: 0px;
+  padding: 0 20rpx;
+  align-items: center;
+}
+.search_input {
+  flex: 1;
+  border-bottom: 0.5px solid #2ebaef;
 }
 </style>
 
