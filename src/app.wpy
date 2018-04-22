@@ -61,7 +61,6 @@ export default class extends wepy.app {
   async onLaunch() {
     wepy.showShareMenu();
 
-    this.login();
     console.log('onLaunch = APP启动完成');
   }
 
@@ -129,6 +128,18 @@ export default class extends wepy.app {
 
         // 没什么用，解密出来的信息和userInfo的内容一样，我擦
         // const wxUser = await this.decodeUserInfo(rawUser);
+
+        //缓存本地
+        wepy.setStorage({
+          key: 'avatar',
+          data: avatarUrl
+        });
+
+        wepy.setStorage({
+          key: 'nickname',
+          data: nickName
+        });
+
         //更新服务端用户信息
         const data = {
           city,

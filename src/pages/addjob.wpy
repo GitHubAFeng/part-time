@@ -155,8 +155,8 @@
                       <view class="weui-agree__checkbox-icon">
                         <icon class="weui-agree__checkbox-icon-check" type="success_no_circle" size="9" wx:if="{{isAgree}}"></icon>
                       </view>
-                      阅读并同意
-                      <navigator url="" class="weui-agree__link">《相关条款》</navigator>
+                      请勾选
+                      <navigator url="" class="weui-agree__link">我保证以上内容真实</navigator>
                     </view>
                   </label>
                 </checkbox-group>
@@ -170,7 +170,7 @@
             </form>
           </view>
         </scroll-view>
-        <text class="tail">请认真查阅注意事项</text>
+        <!-- <text class="tail">请认真查阅注意事项</text> -->
       </view>
     </view>
   </view>

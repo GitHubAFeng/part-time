@@ -20,8 +20,8 @@
               <view class="weui-cell">
                 <view class="weui-label iconfont" style="width:10%;font-size:20px;">&#xe616;</view>
                 <view style="flex:1;display:flex;flex-direction:row;">
-                  <view class="weui-label">微信：{{info.wechat}}</view>
-                  <view class="weui-label">电话：{{info.phone}}</view>
+                  <view class="weui-label" style="width:50%;">微信：{{info.wechat}}</view>
+                  <view class="weui-label" style="width:50%;">电话：{{info.phone}}</view>
                 </view>
 
               </view>
@@ -55,7 +55,7 @@
 
         </scroll-view>
 
-        <text class="tail">请认真查阅注意事项</text>
+        <!-- <text class="tail">请认真查阅注意事项</text> -->
       </view>
     </view>
     <view class="goTop" style="display:{{is_top ? 'block' : 'none'}};">
@@ -63,7 +63,7 @@
     </view>
     <view class="comments_in">
       <view class="weui-label iconfont" style="width:8%;padding:0 10rpx;font-size:25px;">&#xe8ab;</view>
-      <input class="comments_input" placeholder="说些什么吧？" bindinput="bindKeyInput" @tap="oncomments" focus="{{focus}}" />
+      <input class="comments_input" placeholder="说些什么吧？"  bindinput="bindKeyInput" @tap="oncomments" focus="{{focus}}" />
       <view class="weui-label iconfont" style="width:10%;padding:0 10rpx;font-size:25px;" @tap="oncommentsgo">&#xe642;</view>
     </view>
   </view>
@@ -112,7 +112,8 @@ export default class TaskDeasil extends wepy.page {
       wechat: '',
       images: []
     },
-    inputValue: ''
+    inputValue: '',
+    claerValue: ''
   };
 
   components = {
@@ -161,7 +162,12 @@ export default class TaskDeasil extends wepy.page {
         result.then(v => {
           console.log(v);
           if (v.code == 0) {
-            Tips.success('评论成功');
+            Tips.success('评论成功').then(() => {
+              this.currentPage = 1;
+              this.comlist = [];
+              this.getList();
+              this.$apply();
+            });
           } else {
             Tips.error('评论失败，请稍后重试！');
           }
@@ -443,6 +449,7 @@ export default class TaskDeasil extends wepy.page {
   flex: 1;
   border-radius: 100rpx;
   border: 1rpx solid @green;
+  height: 1.6rem;
 }
 
 .record {

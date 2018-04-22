@@ -47,6 +47,9 @@ export default class Index extends wepy.page {
     angle: 0,
     user: {
       title: '',
+      avatar: '',
+      nickname: '',
+      gender: 0,
       record: 0
     },
     winWidth: 0,
@@ -76,26 +79,25 @@ export default class Index extends wepy.page {
   async onLoad(options) {
     const _this = this;
 
-    // 获取服务端用户数据
-    const {
-      avatar,
-      gender,
-      nickname,
-      city,
-      country
-    } = await this.$parent.login();
-
-    this.user.avatar = avatar;
-    this.user.gender = gender;
-    this.user.nickname = nickname;
-    this.$apply();
+    // 获取用户数据
+    const { avatar, gender, nickname } = await this.$parent.login();
+    _this.user.avatar = avatar;
+    _this.user.gender = gender;
+    _this.user.nickname = nickname;
 
     console.log('onLoad = index首页');
   }
 
   onShow() {
+    const _this = this;
     const { windowWidth } = wepy.getSystemInfoSync();
     this.winWidth = windowWidth;
+
+    if (_this.user.avatar == '' || _this.user.avatar == null) {
+      _this.user.avatar = wx.getStorageSync('avatar');
+      _this.user.nickname = wx.getStorageSync('nickname');
+      _this.$apply();
+    }
 
     //动画，但做循环不方便
     // let animation = wx.createAnimation();

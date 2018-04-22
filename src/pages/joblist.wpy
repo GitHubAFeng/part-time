@@ -19,7 +19,7 @@
             <taskListCom :list.sync="tasklist"></taskListCom>
           </view>
         </scroll-view>
-        <text class="tail">请认真查阅注意事项</text>
+        <!-- <text class="tail">请认真查阅注意事项</text> -->
       </view>
     </view>
   </view>
