@@ -156,7 +156,7 @@
                         <icon class="weui-agree__checkbox-icon-check" type="success_no_circle" size="9" wx:if="{{isAgree}}"></icon>
                       </view>
                       请勾选
-                      <navigator url="" class="weui-agree__link">我保证以上内容真实</navigator>
+                      <navigator url="#" class="weui-agree__link">我保证以上内容真实</navigator>
                     </view>
                   </label>
                 </checkbox-group>

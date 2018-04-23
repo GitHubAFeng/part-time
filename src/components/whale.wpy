@@ -8,7 +8,7 @@
 import wepy from 'wepy';
 export default class whale extends wepy.component {
   data = {
-    url: '../style/icon/whale-wave.gif',
+    url: 'https://task.iafeng.cc/public/images/whale-wave.gif',
     is_play: false,
     url_index: 0,
     animationData: {},
@@ -38,17 +38,18 @@ export default class whale extends wepy.component {
         }, 2000);
         return;
       }
+      //注意 这里有个坑，动态更换image的src需要使用服务器的图片，否则在真机中无法显示！
       this.url =
         this.url_index % 2 == 0
-          ? '../style/icon/whale-water.gif?_=' + Math.random()
-          : '../style/icon/whale-jump.gif?_=' + Math.random();
+          ? 'https://task.iafeng.cc/public/images/whale-water.gif?_=' + Math.random()
+          : 'https://task.iafeng.cc/public/images/whale-jump.gif?_=' + Math.random();
       this.is_play = true;
       this.url_index++;
       this.$apply();
 
       console.log('go =', this.url);
       setTimeout(() => {
-        that.url = '../style/icon/whale-wave.gif?_=' + Math.random();
+        that.url = 'https://task.iafeng.cc/public/images/whale-wave.gif?_=' + Math.random();
         this.is_play = false;
         that.$apply();
         console.log('rego =', that.url);

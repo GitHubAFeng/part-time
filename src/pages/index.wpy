@@ -81,9 +81,6 @@ export default class Index extends wepy.page {
 
     // 获取用户数据
     const { avatar, gender, nickname } = await this.$parent.login();
-    _this.user.avatar = avatar;
-    _this.user.gender = gender;
-    _this.user.nickname = nickname;
 
     console.log('onLoad = index首页');
   }
@@ -93,7 +90,7 @@ export default class Index extends wepy.page {
     const { windowWidth } = wepy.getSystemInfoSync();
     this.winWidth = windowWidth;
 
-    if (_this.user.avatar == '' || _this.user.avatar == null) {
+    if (_this.user.avatar == '' || _this.user.nickname == '') {
       _this.user.avatar = wx.getStorageSync('avatar');
       _this.user.nickname = wx.getStorageSync('nickname');
       _this.$apply();

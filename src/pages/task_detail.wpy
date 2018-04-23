@@ -40,7 +40,7 @@
                   </view>
                   <view class="weui-article__p" style="margin-left:30rpx;">
                     <repeat for="{{info.images}}" key="index" index="index" item="item">
-                      <image class="weui-article__img" src="{{item}}" mode="widthFix" style="width:600rpx;margin:0 auto;" lazy-load="true" />
+                      <image class="weui-article__img" src="{{item}}" mode="widthFix" style="width:600rpx;margin:0 auto;" @tap="previewImage" lazy-load="true" />
                     </repeat>
                   </view>
                 </view>
@@ -61,11 +61,15 @@
     <view class="goTop" style="display:{{is_top ? 'block' : 'none'}};">
       <image class="icon-gotop" src="../style/image/gotop.png" @tap="goTop" />
     </view>
-    <view class="comments_in">
-      <view class="weui-label iconfont" style="width:8%;padding:0 10rpx;font-size:25px;">&#xe8ab;</view>
-      <input class="comments_input" placeholder="说些什么吧？"  bindinput="bindKeyInput" @tap="oncomments" focus="{{focus}}" />
-      <view class="weui-label iconfont" style="width:10%;padding:0 10rpx;font-size:25px;" @tap="oncommentsgo">&#xe642;</view>
-    </view>
+
+    <form style="z-index:500;">
+      <view class="comments_in">
+        <view class="weui-label iconfont" style="width:8%;padding:0 10rpx;font-size:25px;">&#xe8ab;</view>
+        <input class="comments_input" placeholder="说些什么吧？" bindinput="bindKeyInput" @tap="oncomments" focus="{{focus}}" />
+        <button class="comments_to iconfont" formType="reset" @tap="oncommentsgo">&#xe642;</button>
+      </view>
+    </form>
+
   </view>
 </template>
 
@@ -122,6 +126,14 @@ export default class TaskDeasil extends wepy.page {
   };
 
   methods = {
+    previewImage(e) {
+      let that = this;
+      let current = e.target.dataset.src;
+      wepy.previewImage({
+        current: current, // 当前显示图片的链接
+        urls: that.info.images // 需要预览的图片链接列表
+      });
+    },
     scrolltolower(e) {
       console.log('home-scrolltolower');
       let that = this;
@@ -255,6 +267,11 @@ export default class TaskDeasil extends wepy.page {
 
 <style lang="less">
 @import '../style/variables';
+
+//去除按钮外框
+button::after {
+  border: none;
+}
 
 .container {
   position: relative;
@@ -506,6 +523,20 @@ export default class TaskDeasil extends wepy.page {
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
+}
+
+.comments-list {
+  margin-bottom: 30rpx;
+}
+
+.comments_to {
+  width: 10%;
+  padding: 0 10rpx;
+  font-size: 25px;
+  margin-right: 10rpx;
+  margin-left: 10rpx;
+  line-height: 1.2;
+  background-color: rgba(0, 0, 0, 0);
 }
 </style>
 
